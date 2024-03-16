@@ -5,7 +5,7 @@ import rwsArgsHelper  from './helpers/_args';
 
 import { RWSManagedConsole } from './helpers/_managed_console';
 
-export default {
+export {
     rwsShell,
     rwsPath,
     rwsFS,
