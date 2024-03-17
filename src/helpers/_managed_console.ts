@@ -2,8 +2,8 @@ import * as readline from 'readline';
 import chalk from 'chalk';
 import getArgs from '../helpers/_args';
 
-class RWSManagedConsole {
-    static async _askForYn(question: string, rl?: readline.Interface): Promise<boolean> {
+const RWSManagedConsole =  {
+    _askForYn: async (question: string, rl?: readline.Interface): Promise<boolean> => {
         return new Promise((yNResolve) => {
             if (!rl) {
                 rl = readline.createInterface({
@@ -24,14 +24,13 @@ class RWSManagedConsole {
                 }
             });
         });
-    }
-
-    static async _askFor<T>(
+    },
+    _askFor: async<T>(
         question: string,
         defaultVal: T | null = null,
         parser: (txt: string) => T = (txt) => txt as unknown as T,
         yN = true
-    ): Promise<T | null> {
+    ): Promise<T | null> => {
         return new Promise((resolve) => {
             (async () => {
                 const rl = readline.createInterface({
@@ -47,7 +46,7 @@ class RWSManagedConsole {
                 };
     
                 if (yN) {
-                    const ynResult = await this._askForYn('Do you want to set "' + question + '"?', rl);
+                    const ynResult = await RWSManagedConsole._askForYn('Do you want to set "' + question + '"?', rl);
     
                     if (!ynResult) {
                         console.log(chalk.red('Canceled'));
