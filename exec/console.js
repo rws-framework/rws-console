@@ -13,6 +13,7 @@ const bootstrap = RWSConsole.rwsCli.bootstrap(['test'], __dirname + '/actions');
         options: [{
             short: 'o1',
             long: 'option1'
-        }]
+        }],
+        args: ['X']
     });
 })()

@@ -17,11 +17,7 @@ export type RWSInputOptsType<T extends OptionType = OptionType> = {
     desc?: string;
     defaultValue: T;
 }[];
-export type RWSInputArgsType = {
-    short?: string;
-    long: string;
-    desc?: string;
-}[];
+export type RWSInputArgsType = string[];
 export type RWSInputType = {
     options?: RWSInputOptsType;
     args?: RWSInputArgsType;

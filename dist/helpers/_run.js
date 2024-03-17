@@ -8,8 +8,9 @@ const os_1 = __importDefault(require("os"));
 const path_1 = __importDefault(require("path"));
 const path_2 = require("../tools/path");
 const runCmd = async (action, argsOpts = {}) => {
+    var _a;
     const program = commander_1.program;
-    const programCommand = program.command(`${process.argv[2]} <a1> <a2> <a3>`); // Capture variadic arguments for the command
+    const programCommand = program.command(`${process.argv[2]} ${(((_a = argsOpts === null || argsOpts === void 0 ? void 0 : argsOpts.args) === null || _a === void 0 ? void 0 : _a.map(it => `<${it}>`)) || []).join(' ')}`); // Capture variadic arguments for the command
     for (const opt of (argsOpts === null || argsOpts === void 0 ? void 0 : argsOpts.options) || []) {
         programCommand.option(`-${opt.short}, --${opt.long} <opt-value>`, opt.desc);
     }

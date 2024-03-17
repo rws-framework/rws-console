@@ -18,13 +18,13 @@ export interface IOutputOpts {
 type OptionType = string | boolean | string[];
 
 export type RWSInputOptsType<T extends OptionType = OptionType> = { short?: string, long: string, desc?: string, defaultValue: T}[];
-export type RWSInputArgsType = { short?: string, long: string, desc?: string}[];
+export type RWSInputArgsType = string[];
 
 export type RWSInputType = { options?: RWSInputOptsType, args?: RWSInputArgsType };
 
 const runCmd = async (action: Promise<IRWSCliActionType>, argsOpts: RWSInputType = {}): Promise<Command> => {     
     const program = cmdFactory;          
-    const programCommand = program.command(`${process.argv[2]} <a1> <a2> <a3>`) // Capture variadic arguments for the command
+    const programCommand = program.command(`${process.argv[2]} ${(argsOpts?.args?.map(it => `<${it}>`) || []).join(' ')}`) // Capture variadic arguments for the command
 
     for(const opt of argsOpts?.options || []){
         programCommand.option(`-${opt.short}, --${opt.long} <opt-value>`, opt.desc);
