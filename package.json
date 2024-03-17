@@ -1,6 +1,6 @@
 {
     "name": "@rws-framework/console",
-    "version": "0.0.5",
+    "version": "0.1.0",
     "private": false,
     "description": "",
     "author": "papablack",
@@ -8,7 +8,11 @@
     "main": "dist/index.js",
     "types": "dist/index.d.ts",
     "dependencies": {
-        "chalk": "3.0.0"
+        "chalk": "3.0.0",
+        "commander": "^12.0.0"
+    },
+    "bin": {
+        "rws-console": "exec/console.js"
     },
     "devDependencies": {
         "@typescript-eslint/eslint-plugin": "^7.2.0",

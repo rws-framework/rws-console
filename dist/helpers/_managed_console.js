@@ -26,13 +26,13 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
     return (mod && mod.__esModule) ? mod : { "default": mod };
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.getArgs = exports.RWSManagedConsole = void 0;
+exports.bootstrap = exports.RWSCliBootstrap = exports.loadAction = exports.RWSManagedConsole = void 0;
 const readline = __importStar(require("readline"));
 const chalk_1 = __importDefault(require("chalk"));
-const _args_1 = __importDefault(require("../helpers/_args"));
-exports.getArgs = _args_1.default;
-class RWSManagedConsole {
-    static async _askForYn(question, rl) {
+const path_1 = __importDefault(require("path"));
+const _run_1 = __importDefault(require("./_run"));
+exports.RWSManagedConsole = {
+    _askForYn: async function (question, rl) {
         return new Promise((yNResolve) => {
             if (!rl) {
                 rl = readline.createInterface({
@@ -52,8 +52,8 @@ class RWSManagedConsole {
                 }
             });
         });
-    }
-    static async _askFor(question, defaultVal = null, parser = (txt) => txt, yN = true) {
+    },
+    _askFor: async function (question, defaultVal = null, parser = (txt) => txt, yN = true) {
         return new Promise((resolve) => {
             (async () => {
                 const rl = readline.createInterface({
@@ -67,7 +67,7 @@ class RWSManagedConsole {
                     });
                 };
                 if (yN) {
-                    const ynResult = await this._askForYn('Do you want to set "' + question + '"?', rl);
+                    const ynResult = await exports.RWSManagedConsole._askForYn('Do you want to set "' + question + '"?', rl);
                     if (!ynResult) {
                         console.log(chalk_1.default.red('Canceled'));
                         rl.close();
@@ -79,6 +79,36 @@ class RWSManagedConsole {
             })();
         });
     }
+};
+async function loadAction(actionName, actionsDir) {
+    return (await Promise.resolve(`${path_1.default.resolve(`${actionsDir}/${actionName}Action.js`)}`).then(s => __importStar(require(s)))).default;
 }
-exports.RWSManagedConsole = RWSManagedConsole;
+exports.loadAction = loadAction;
+class RWSCliBootstrap {
+    constructor(actions, actionsDir) {
+        this.actions = actions;
+        this.actionsDir = actionsDir;
+    }
+    async run(runOpts) {
+        const command = process.argv[2];
+        if (!Object.keys(this.actions).includes(`${command}`)) {
+            console.error(`No command executor "${command}" is defined`);
+            return;
+        }
+        return await (0, _run_1.default)(this.actions[command], runOpts);
+    }
+}
+exports.RWSCliBootstrap = RWSCliBootstrap;
+function bootstrap(actions, actionsDir) {
+    if (!actionsDir || !actions || !actions.length) {
+        console.trace(chalk_1.default.red('Bootstrap needs "actions" string array (at least one defined), and "actionsDir" (string path) parameters'));
+        return;
+    }
+    const actionsToLoad = {};
+    actions.forEach((act) => {
+        actionsToLoad[act] = loadAction(act, actionsDir);
+    });
+    return new RWSCliBootstrap(actionsToLoad, actionsDir);
+}
+exports.bootstrap = bootstrap;
 //# sourceMappingURL=_managed_console.js.map

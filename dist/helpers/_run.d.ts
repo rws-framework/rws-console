@@ -1,13 +1,14 @@
-import { Command } from 'commander';
-export interface IOutputArgs {
+import { Command, OptionValues } from 'commander';
+import { IRWSCliActionType } from './_managed_console';
+export interface IOutputOpts {
     command: string;
     args: string[];
     moduleCfgDir: string;
     webpackPath: string;
-    packageRootDir: string;
     totalMemoryMB: number;
     totalMemoryGB: number;
     program: Command;
+    options: OptionValues;
 }
 type OptionType = string | boolean | string[];
 export type RWSInputOptsType<T extends OptionType = OptionType> = {
@@ -25,5 +26,5 @@ export type RWSInputType = {
     options?: RWSInputOptsType;
     args?: RWSInputArgsType;
 };
-declare const runCmd: (argsOpts?: RWSInputType) => IOutputArgs;
+declare const runCmd: (action: Promise<IRWSCliActionType>, argsOpts?: RWSInputType) => Promise<Command>;
 export default runCmd;

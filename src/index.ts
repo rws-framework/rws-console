@@ -1,14 +1,21 @@
 import * as rwsShell from './tools/shell';
 import * as rwsPath from './tools/path';
 import * as rwsFS from './tools/fs';
-import rwsArgsHelper  from './helpers/_args';
+import rwsArgsHelper  from './helpers/_run';
 
-import { RWSManagedConsole } from './helpers/_managed_console';
+import { RWSManagedConsole, loadAction, bootstrap, RWSCliBootstrap } from './helpers/_managed_console';
+
+const rwsCli = {
+    loadAction, bootstrap, RWSCliBootstrap
+};
 
 export {
     rwsShell,
     rwsPath,
     rwsFS,
     RWSManagedConsole,
-    rwsArgsHelper
+    rwsArgsHelper,
+    rwsCli
 };
+
+export default rwsCli;
