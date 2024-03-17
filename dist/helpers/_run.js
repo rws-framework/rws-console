@@ -18,7 +18,6 @@ const runCmd = async (action, argsOpts = {}) => {
         //args
     }
     const options = {};
-    let args;
     const totalMemoryBytes = os_1.default.totalmem();
     const totalMemoryMB = totalMemoryBytes / 1024 / 1024;
     const totalMemoryGB = totalMemoryMB / 1024;
@@ -27,18 +26,25 @@ const runCmd = async (action, argsOpts = {}) => {
     const parsedOpts = {
         command: process.argv[2],
         program,
-        args: args,
+        args: {},
         moduleCfgDir,
         webpackPath,
         totalMemoryMB,
         totalMemoryGB,
-        options
+        options,
+        rawArgs: []
     };
     programCommand.action(async (...actionArgs) => {
         parsedOpts.webpackPath = path_1.default.resolve(__dirname, '..');
         parsedOpts.moduleCfgDir = `${(0, path_2.findRootWorkspacePath)(process.cwd())}/node_modules/.rws`;
         parsedOpts.options = programCommand.opts();
-        parsedOpts.args = actionArgs.filter((v, index) => (index < actionArgs.length - 1) && typeof v === 'string') || [];
+        const filteredArgs = actionArgs.filter((v, index) => (index < actionArgs.length - 1) && typeof v === 'string') || [];
+        const parsedArgs = {};
+        for (const i in filteredArgs) {
+            parsedArgs[argsOpts.args[i]] = filteredArgs[i];
+        }
+        parsedOpts.args = parsedArgs;
+        parsedOpts.rawArgs = filteredArgs;
     });
     program.parse(process.argv);
     return (await action)(parsedOpts);

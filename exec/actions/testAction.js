@@ -16,7 +16,7 @@ module.exports = async function (output) {
     const program = output.program;
     const commandOptions = output.options;
     const command = output.command;    
-    const commandArgs = output.args || [];    
+    const commandArgs = output.rawArgs || [];    
 
     if (!commandArgs.length) {
         throw new Error('Command args needed');
@@ -27,7 +27,7 @@ module.exports = async function (output) {
     }    
 
     console.log(chalk.blue('PARSED COMMAND:'), command);
-    console.log(chalk.yellow('Command args: '), commandArgs);
+    console.log(chalk.yellow('Command args: '), commandArgs,output.args);
     console.log(chalk.yellow('Command options: '), commandOptions);
 
     return program;

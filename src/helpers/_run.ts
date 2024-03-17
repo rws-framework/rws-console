@@ -6,13 +6,14 @@ import { IRWSCliActionType } from './_managed_console';
 
 export interface IOutputOpts {
     command: string;
-    args: string[];
+    args: {[key: string]: string};
     moduleCfgDir: string;
     webpackPath: string;
     totalMemoryMB: number;
     totalMemoryGB: number;
     program: Command;
     options: OptionValues;
+    rawArgs: string[]
 }
 
 type OptionType = string | boolean | string[];
@@ -36,7 +37,6 @@ const runCmd = async (action: Promise<IRWSCliActionType>, argsOpts: RWSInputType
 
     const options: OptionValues = {};        
     
-    let args: string[];    
 
     const totalMemoryBytes = os.totalmem();
     const totalMemoryMB = totalMemoryBytes / 1024 / 1024;
@@ -48,12 +48,13 @@ const runCmd = async (action: Promise<IRWSCliActionType>, argsOpts: RWSInputType
     const parsedOpts: IOutputOpts = {
         command: process.argv[2],
         program,
-        args: args,
+        args: {},
         moduleCfgDir,
         webpackPath,        
         totalMemoryMB,
         totalMemoryGB,
-        options
+        options,
+        rawArgs: []
     };    
 
     programCommand.action(async (...actionArgs) => {              
@@ -61,7 +62,16 @@ const runCmd = async (action: Promise<IRWSCliActionType>, argsOpts: RWSInputType
         parsedOpts.webpackPath = path.resolve(__dirname, '..');        
         parsedOpts.moduleCfgDir = `${findRootWorkspacePath(process.cwd())}/node_modules/.rws`;
         parsedOpts.options = programCommand.opts()
-        parsedOpts.args = actionArgs.filter((v: string, index: number) => (index < actionArgs.length - 1) && typeof v === 'string') || []         
+
+        const filteredArgs: string[] = actionArgs.filter((v: string, index: number) => (index < actionArgs.length - 1) && typeof v === 'string') || []         
+        const parsedArgs: {[key: string]: string} = {}
+
+        for(const i in filteredArgs){
+            parsedArgs[argsOpts.args[i]] = filteredArgs[i];
+        }
+
+        parsedOpts.args = parsedArgs;
+        parsedOpts.rawArgs = filteredArgs;
        
     })    
 
