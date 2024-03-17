@@ -3,7 +3,7 @@ import chalk from 'chalk';
 import getArgs from '../helpers/_args';
 
 const RWSManagedConsole =  {
-    _askForYn: async (question: string, rl?: readline.Interface): Promise<boolean> => {
+    _askForYn: async function (question: string, rl?: readline.Interface): Promise<boolean> {
         return new Promise((yNResolve) => {
             if (!rl) {
                 rl = readline.createInterface({
@@ -25,12 +25,12 @@ const RWSManagedConsole =  {
             });
         });
     },
-    _askFor: async<T>(
+    _askFor: async function<T>(
         question: string,
         defaultVal: T | null = null,
         parser: (txt: string) => T = (txt) => txt as unknown as T,
         yN = true
-    ): Promise<T | null> => {
+    ): Promise<T | null> {
         return new Promise((resolve) => {
             (async () => {
                 const rl = readline.createInterface({
