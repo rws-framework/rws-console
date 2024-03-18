@@ -76,6 +76,21 @@ export function findRootWorkspacePath(currentPath: string): string {
     return currentPath;
 }
 
+export function findPackageDir(currentPath: string, i: number = 0): string {
+    if(i > 10){
+        throw new Error('Too much recursion applied. Create package.json somewhere in: ' + currentPath);
+    }
+
+    const parentPackageJsonPath = path.join(currentPath + '/..', 'package.json');
+    const parentPackageDir = path.dirname(parentPackageJsonPath);
+
+    if (!fs.existsSync(parentPackageJsonPath)) {
+        return findPackageDir(parentPackageDir, i+1);
+    }
+
+    return currentPath;
+}
+
 export function getActiveWorkSpaces(currentPath: string, mode: 'all' | 'frontend' | 'backend' = 'all'): string[] {
     if (!currentPath) {
         throw new Error('[_tools.ts:getActiveWorkSpaces] "currentPath" argument is required.');

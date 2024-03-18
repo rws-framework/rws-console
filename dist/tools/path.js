@@ -3,7 +3,7 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
     return (mod && mod.__esModule) ? mod : { "default": mod };
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.getActiveWorkSpaces = exports.findRootWorkspacePath = exports.removeWorkspacePackages = exports.linkWorkspace = exports.linkWorkspaces = exports.removeDirectory = exports.createSymlink = void 0;
+exports.getActiveWorkSpaces = exports.findPackageDir = exports.findRootWorkspacePath = exports.removeWorkspacePackages = exports.linkWorkspace = exports.linkWorkspaces = exports.removeDirectory = exports.createSymlink = void 0;
 const path_1 = __importDefault(require("path"));
 const fs_1 = __importDefault(require("fs"));
 function createSymlink(symLinkDir, targetDir) {
@@ -71,6 +71,18 @@ function findRootWorkspacePath(currentPath) {
     return currentPath;
 }
 exports.findRootWorkspacePath = findRootWorkspacePath;
+function findPackageDir(currentPath, i = 0) {
+    if (i > 10) {
+        throw new Error('Too much recursion applied. Create package.json somewhere in: ' + currentPath);
+    }
+    const parentPackageJsonPath = path_1.default.join(currentPath + '/..', 'package.json');
+    const parentPackageDir = path_1.default.dirname(parentPackageJsonPath);
+    if (!fs_1.default.existsSync(parentPackageJsonPath)) {
+        return findPackageDir(parentPackageDir, i + 1);
+    }
+    return currentPath;
+}
+exports.findPackageDir = findPackageDir;
 function getActiveWorkSpaces(currentPath, mode = 'all') {
     if (!currentPath) {
         throw new Error('[_tools.ts:getActiveWorkSpaces] "currentPath" argument is required.');
