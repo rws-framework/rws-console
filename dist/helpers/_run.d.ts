@@ -22,6 +22,7 @@ export type RWSInputOptsType<T extends OptionType = OptionType> = {
 }[];
 export type RWSInputArgsType = string[];
 export type RWSInputType = {
+    proxy?: boolean;
     options?: RWSInputOptsType;
     args?: RWSInputArgsType;
 };

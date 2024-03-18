@@ -81,14 +81,17 @@ export function findPackageDir(currentPath: string, i: number = 0): string {
         throw new Error('Too much recursion applied. Create package.json somewhere in: ' + currentPath);
     }
 
-    const parentPackageJsonPath = path.join(currentPath + '/..', 'package.json');
-    const parentPackageDir = path.dirname(parentPackageJsonPath);
+    const packageJsonPath = path.join(currentPath, 'package.json');
 
-    if (!fs.existsSync(parentPackageJsonPath)) {
-        return findPackageDir(parentPackageDir, i+1);
+    if (fs.existsSync(packageJsonPath)) {    
+        return currentPath;
+      
     }
 
-    return currentPath;
+    const parentPackageJsonPath = path.join(currentPath + '/..', 'package.json');
+    const parentPackageDir = path.dirname(parentPackageJsonPath);
+    
+    return findPackageDir(parentPackageDir, i+1);    
 }
 
 export function getActiveWorkSpaces(currentPath: string, mode: 'all' | 'frontend' | 'backend' = 'all'): string[] {

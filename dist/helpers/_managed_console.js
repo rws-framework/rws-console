@@ -90,12 +90,11 @@ class RWSCliBootstrap {
         this.actionsDir = actionsDir;
     }
     async run(runOpts) {
-        const command = process.argv[2];
-        if (!Object.keys(this.actions).includes(`${command}`)) {
-            console.error(`No command executor "${command}" is defined`);
+        if (!Object.keys(this.actions).includes(`${process.argv[2]}`) && !runOpts.proxy) {
+            console.error(`No command executor "${process.argv[2]}" is defined`);
             return;
         }
-        return await (0, _run_1.default)(this.actions[command], runOpts);
+        return await (0, _run_1.default)(this.actions[runOpts.proxy ? 'proxy' : process.argv[2]], runOpts);
     }
 }
 exports.RWSCliBootstrap = RWSCliBootstrap;
