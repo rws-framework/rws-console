@@ -31,7 +31,7 @@ export const RWSManagedConsole =  {
     _askFor: async function<T>(
         question: string,
         defaultVal: T | null = null,
-        parser: (txt: string) => T = (txt) => txt as unknown as T,
+        parser: (...args: any[]) => T = (...args: any[]) => args[0],
         yN = true
     ): Promise<T | null> {
         return new Promise((resolve) => {

@@ -53,7 +53,7 @@ exports.RWSManagedConsole = {
             });
         });
     },
-    _askFor: async function (question, defaultVal = null, parser = (txt) => txt, yN = true) {
+    _askFor: async function (question, defaultVal = null, parser = (...args) => args[0], yN = true) {
         return new Promise((resolve) => {
             (async () => {
                 const rl = readline.createInterface({

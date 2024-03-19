@@ -4,7 +4,7 @@ import { Command } from 'commander';
 import { IOutputOpts, RWSInputType } from './_run';
 export declare const RWSManagedConsole: {
     _askForYn: (question: string, rl?: readline.Interface) => Promise<boolean>;
-    _askFor: <T>(question: string, defaultVal?: T | null, parser?: (txt: string) => T, yN?: boolean) => Promise<T | null>;
+    _askFor: <T>(question: string, defaultVal?: T | null, parser?: (...args: any[]) => T, yN?: boolean) => Promise<T | null>;
 };
 export type IRWSCliActionType = (inputOpts: IOutputOpts) => Promise<Command>;
 export type IRWSCliActionsType = {
