@@ -14,7 +14,7 @@ function collectFiles(dir: string, fileList: string[] = []): string[] {
     return fileList;
 }
 
-export const copyFiles = async (copyList: Record<string, string[]> = {}): Promise<void> => {
+export const copyFiles = async (copyList: Record<string, string[]> = {}, ignored: RegExp[] = []): Promise<void> => {
     const copyQueue: { from: string; to: string }[] = [];
 
     Object.keys(copyList).forEach((targetPath) => {
@@ -64,7 +64,14 @@ export const copyFiles = async (copyList: Record<string, string[]> = {}): Promis
             fs.unlinkSync(copyset.to);
         }        
 
-        fs.copyFileSync(copyset.from, copyset.to);       
+        const isIgnored: boolean = ignored.some((regex) => regex.test(copyset.from));
+
+        if (!isIgnored) {
+            fs.copyFileSync(copyset.from, copyset.to);       
+
+        }else{
+            console.log(`Skipping copy of "${chalk.yellowBright(copyset.from)}" as it matches the ignore list.`);
+        }
     });    
 
     Object.keys(copyList).forEach((targetPath) => {
