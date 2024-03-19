@@ -19,7 +19,7 @@ function collectFiles(dir, fileList = []) {
     });
     return fileList;
 }
-const copyFiles = async (copyList = {}) => {
+const copyFiles = async (copyList = {}, ignored = []) => {
     const copyQueue = [];
     Object.keys(copyList).forEach((targetPath) => {
         const sources = copyList[targetPath];
@@ -61,7 +61,13 @@ const copyFiles = async (copyList = {}) => {
         if (fs_1.default.existsSync(copyset.to)) {
             fs_1.default.unlinkSync(copyset.to);
         }
-        fs_1.default.copyFileSync(copyset.from, copyset.to);
+        const isIgnored = ignored.some((regex) => regex.test(copyset.from));
+        if (!isIgnored) {
+            fs_1.default.copyFileSync(copyset.from, copyset.to);
+        }
+        else {
+            console.log(`Skipping copy of "${chalk_1.default.yellowBright(copyset.from)}" as it matches the ignore list.`);
+        }
     });
     Object.keys(copyList).forEach((targetPath) => {
         const sources = copyList[targetPath];

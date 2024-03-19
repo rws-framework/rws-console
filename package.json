@@ -1,12 +1,15 @@
 {
     "name": "@rws-framework/console",
-    "version": "0.1.10",
+    "version": "0.1.11",
     "private": false,
     "description": "",
     "author": "papablack",
     "license": "ISC",
     "main": "dist/index.js",
     "types": "dist/index.d.ts",
+    "scripts": {
+        "rws:create": "node exec/console.js"
+    },
     "bin": {
         "rws-console": "exec/console.js"
     },
