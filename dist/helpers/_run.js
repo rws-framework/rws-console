@@ -12,7 +12,7 @@ const runCmd = async (action, argsOpts = {}) => {
     let theArgs = (argsOpts === null || argsOpts === void 0 ? void 0 : argsOpts.args) || [];
     const programCommand = program.command(`${process.argv[2]} ${(theArgs.map(it => `<${it}>`) || []).join(' ')}`); // Capture variadic arguments for the command
     for (const opt of (argsOpts === null || argsOpts === void 0 ? void 0 : argsOpts.options) || []) {
-        programCommand.option(`-${opt.short}, --${opt.long} <opt-value>`, opt.desc);
+        programCommand.option(`-${opt.short}, --${opt.long} <opt-value>`, opt.desc, opt.parseArg, opt.defaultValue);
     }
     for (const opt of (argsOpts === null || argsOpts === void 0 ? void 0 : argsOpts.args) || []) {
         //args
