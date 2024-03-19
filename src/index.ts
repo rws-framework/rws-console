@@ -1,9 +1,9 @@
 import * as rwsShell from './tools/shell';
 import * as rwsPath from './tools/path';
 import * as rwsFS from './tools/fs';
-import rwsArgsHelper, {RWSInputType}  from './helpers/_run';
+import rwsArgsHelper, {RWSInputType, IOutputOpts}  from './helpers/_run';
 
-import { RWSManagedConsole, loadAction, bootstrap, RWSCliBootstrap } from './helpers/_managed_console';
+import { RWSManagedConsole, loadAction, bootstrap, RWSCliBootstrap,  } from './helpers/_managed_console';
 
 const rwsCli = {
     loadAction, bootstrap, RWSCliBootstrap
@@ -16,7 +16,8 @@ export {
     RWSManagedConsole,
     rwsArgsHelper,
     rwsCli,
-    RWSInputType
+    RWSInputType,
+    IOutputOpts
 };
 
 export default rwsCli;
