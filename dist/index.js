@@ -26,13 +26,15 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
     return (mod && mod.__esModule) ? mod : { "default": mod };
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.rwsCli = exports.rwsArgsHelper = exports.RWSManagedConsole = exports.rwsFS = exports.rwsPath = exports.rwsShell = void 0;
+exports.rwsCli = exports.rwsArgsHelper = exports.RWSManagedConsole = exports.rwsFS = exports.rwsPath = exports.rwsShell = exports.RWSConfigBuilder = void 0;
 const rwsShell = __importStar(require("./tools/shell"));
 exports.rwsShell = rwsShell;
 const rwsPath = __importStar(require("./tools/path"));
 exports.rwsPath = rwsPath;
 const rwsFS = __importStar(require("./tools/fs"));
 exports.rwsFS = rwsFS;
+const config_builder_1 = require("./tools/config_builder");
+Object.defineProperty(exports, "RWSConfigBuilder", { enumerable: true, get: function () { return config_builder_1.ConfigBuilder; } });
 const _run_1 = __importDefault(require("./helpers/_run"));
 exports.rwsArgsHelper = _run_1.default;
 const _managed_console_1 = require("./helpers/_managed_console");
