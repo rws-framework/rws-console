@@ -3,6 +3,7 @@ declare class ConfigBuilder<ICFG> {
     cfgData: ICFG;
     constructor(filePath: string, _DEFAULT_CONFIG: ICFG);
     readConfigFile(filePath: string): ICFG;
+    set(key: string, value: any): any;
     get(key: string): any;
     exportDefaultConfig(): ICFG;
     exportBuildConfig(): ICFG;

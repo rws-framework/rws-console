@@ -35,6 +35,10 @@ class Storage {
         return Object.keys(this.data).includes(key);
     }
 
+    set(key: string, value: any) {
+        this.data[key] = value;
+    }
+
     isLoaded(): boolean {
         return this._loaded;
     }
@@ -62,10 +66,16 @@ function isLoaded(): boolean {
     return _STORAGE.isLoaded();
 }
 
+function set(key: string, value: any): void
+{
+    _STORAGE.set(key, value);
+}
+
 const RWSCfgStorage = {
     init,
     get, getAll,
-    has, isLoaded
+    has, isLoaded,
+    set
 };
 
 export {

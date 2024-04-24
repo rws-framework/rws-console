@@ -41,6 +41,10 @@ class ConfigBuilder {
             ...fileConfig,
         };
     }
+    set(key, value) {
+        this._init();
+        return _storage_1.RWSCfgStorage.set(key, value);
+    }
     get(key) {
         this._init();
         return _storage_1.RWSCfgStorage.get(key);

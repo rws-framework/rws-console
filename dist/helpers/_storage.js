@@ -28,6 +28,9 @@ class Storage {
     has(key) {
         return Object.keys(this.data).includes(key);
     }
+    set(key, value) {
+        this.data[key] = value;
+    }
     isLoaded() {
         return this._loaded;
     }
@@ -48,10 +51,14 @@ function has(key) {
 function isLoaded() {
     return _STORAGE.isLoaded();
 }
+function set(key, value) {
+    _STORAGE.set(key, value);
+}
 const RWSCfgStorage = {
     init,
     get, getAll,
-    has, isLoaded
+    has, isLoaded,
+    set
 };
 exports.RWSCfgStorage = RWSCfgStorage;
 //# sourceMappingURL=_storage.js.map

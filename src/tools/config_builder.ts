@@ -23,6 +23,12 @@ class ConfigBuilder<ICFG> {
         };
     }
 
+    set(key: string, value: any): any {
+        this._init();
+
+        return RWSCfgStorage.set(key, value);
+    }
+
     get(key: string): any {
         this._init();
 
