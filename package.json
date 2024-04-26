@@ -1,6 +1,6 @@
 {
     "name": "@rws-framework/console",
-    "version": "0.2.1",
+    "version": "0.2.2",
     "private": false,
     "description": "",
     "author": "papablack",
@@ -15,7 +15,7 @@
     },
     "dependencies": {
         "chalk": "3.0.0",
-        "commander": "^12.0.0",
+        "commander": "^11.0.0",
         "pino": "^8.15.1",
         "pino-colada": "^2.2.2",
         "pino-pretty": "^10.2.0"
