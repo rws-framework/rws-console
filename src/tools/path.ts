@@ -131,3 +131,17 @@ export function getActiveWorkSpaces(currentPath: string, mode: 'all' | 'frontend
 
     return [currentPath];
 }
+
+
+export function relativize(inputPath: string, relationBase: string = null): string
+{
+    if(relationBase === null && !!process && typeof process.cwd === 'function'){
+        relationBase = process.cwd();
+    }
+
+    if (inputPath[0] === '.') {
+        return path.resolve(relationBase, inputPath);
+    }    
+
+    return inputPath;
+}

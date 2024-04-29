@@ -3,7 +3,7 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
     return (mod && mod.__esModule) ? mod : { "default": mod };
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.getActiveWorkSpaces = exports.findPackageDir = exports.findRootWorkspacePath = exports.removeWorkspacePackages = exports.linkWorkspace = exports.linkWorkspaces = exports.removeDirectory = exports.createSymlink = void 0;
+exports.relativize = exports.getActiveWorkSpaces = exports.findPackageDir = exports.findRootWorkspacePath = exports.removeWorkspacePackages = exports.linkWorkspace = exports.linkWorkspaces = exports.removeDirectory = exports.createSymlink = void 0;
 const path_1 = __importDefault(require("path"));
 const fs_1 = __importDefault(require("fs"));
 function createSymlink(symLinkDir, targetDir) {
@@ -113,4 +113,14 @@ function getActiveWorkSpaces(currentPath, mode = 'all') {
     return [currentPath];
 }
 exports.getActiveWorkSpaces = getActiveWorkSpaces;
+function relativize(inputPath, relationBase = null) {
+    if (relationBase === null && !!process && typeof process.cwd === 'function') {
+        relationBase = process.cwd();
+    }
+    if (inputPath[0] === '.') {
+        return path_1.default.resolve(relationBase, inputPath);
+    }
+    return inputPath;
+}
+exports.relativize = relativize;
 //# sourceMappingURL=path.js.map

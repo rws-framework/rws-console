@@ -17,6 +17,5 @@
       "paths": {                 
       }
     },
-    "include": ["./src/index.ts"],
-    "exclude": []
+    "include": ["./src/index.ts"]    
   }

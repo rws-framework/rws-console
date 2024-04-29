@@ -1,6 +1,6 @@
 import * as fs from 'fs';
 import * as json5 from 'json5';
-
+import chalk from 'chalk';
 
 
 import { RWSCfgStorage } from '../helpers/_storage';
@@ -13,6 +13,7 @@ class ConfigBuilder<ICFG> {
 
     readConfigFile(filePath: string): ICFG {
         if (!fs.existsSync(filePath)) {
+            console.log(chalk.yellow('No .rws.json config file detected. Running default config:'), this._DEFAULT_CONFIG);
             return this._DEFAULT_CONFIG;
         }
 

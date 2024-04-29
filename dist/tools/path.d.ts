@@ -6,3 +6,4 @@ export declare function removeWorkspacePackages(packageJsonPath: string, rootDir
 export declare function findRootWorkspacePath(currentPath: string): string;
 export declare function findPackageDir(currentPath: string, i?: number): string;
 export declare function getActiveWorkSpaces(currentPath: string, mode?: 'all' | 'frontend' | 'backend'): string[];
+export declare function relativize(inputPath: string, relationBase?: string): string;

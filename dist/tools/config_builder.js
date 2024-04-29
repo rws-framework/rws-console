@@ -22,10 +22,14 @@ var __importStar = (this && this.__importStar) || function (mod) {
     __setModuleDefault(result, mod);
     return result;
 };
+var __importDefault = (this && this.__importDefault) || function (mod) {
+    return (mod && mod.__esModule) ? mod : { "default": mod };
+};
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.ConfigBuilder = void 0;
 const fs = __importStar(require("fs"));
 const json5 = __importStar(require("json5"));
+const chalk_1 = __importDefault(require("chalk"));
 const _storage_1 = require("../helpers/_storage");
 class ConfigBuilder {
     constructor(filePath, _DEFAULT_CONFIG) {
@@ -34,6 +38,7 @@ class ConfigBuilder {
     }
     readConfigFile(filePath) {
         if (!fs.existsSync(filePath)) {
+            console.log(chalk_1.default.yellow('No .rws.json config file detected. Running default config:'), this._DEFAULT_CONFIG);
             return this._DEFAULT_CONFIG;
         }
         const fileConfig = json5.parse(fs.readFileSync(filePath, 'utf-8'));
