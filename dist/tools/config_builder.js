@@ -52,7 +52,7 @@ class ConfigBuilder {
     }
     get(key) {
         this._init();
-        return _storage_1.RWSCfgStorage.get(key);
+        return _storage_1.RWSCfgStorage.get(key) ? _storage_1.RWSCfgStorage.get(key) : (Object.keys(this._DEFAULT_CONFIG).includes(key) ? this._DEFAULT_CONFIG[key] : null);
     }
     exportDefaultConfig() {
         return this._DEFAULT_CONFIG;

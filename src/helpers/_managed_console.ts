@@ -2,7 +2,7 @@ import * as readline from 'readline';
 import chalk from 'chalk';
 
 import path from 'path';
-import { Command, OptionValues } from 'commander';
+import { Command } from 'commander';
 import runCmd, { IOutputOpts, RWSInputOptsType, RWSInputType } from './_run'
 
 export const RWSManagedConsole =  {

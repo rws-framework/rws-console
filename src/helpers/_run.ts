@@ -59,7 +59,7 @@ const runCmd = async (action: Promise<IRWSCliActionType>, argsOpts: RWSInputType
         rawArgs: []
     };    
 
-    programCommand.action(async (...actionArgs) => {              
+    programCommand.action(async (...actionArgs: any[]) => {              
 
         parsedOpts.webpackPath = path.resolve(__dirname, '..');        
         parsedOpts.moduleCfgDir = `${findRootWorkspacePath(process.cwd())}/node_modules/.rws`;

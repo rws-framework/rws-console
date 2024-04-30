@@ -1,4 +1,6 @@
-declare class ConfigBuilder<ICFG> {
+declare class ConfigBuilder<ICFG extends {
+    [key: string]: any;
+}> {
     private _DEFAULT_CONFIG;
     cfgData: ICFG;
     constructor(filePath: string, _DEFAULT_CONFIG: ICFG);

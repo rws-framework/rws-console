@@ -1,6 +1,6 @@
 {
   "name": "@rws-framework/console",
-  "version": "0.3.0",
+  "version": "0.3.1",
   "private": false,
   "description": "",
   "author": "papablack",
@@ -22,10 +22,10 @@
     "pino-pretty": "^10.2.0"
   },
   "devDependencies": {
-    "@types/node": "^20.12.7",
     "@types/eslint": "^6.0.0",
     "@types/eslint-scope": "3.7.7",
-    "@typescript-eslint/parser": "^5.0.0",    
+    "@types/node": "^20.12.7",
+    "@typescript-eslint/parser": "^5.0.0",
     "eslint": "^6.0.0",
     "tsc": "^2.0.4",
     "tsc-watch": "^6.0.4",

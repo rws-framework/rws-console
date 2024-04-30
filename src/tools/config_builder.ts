@@ -5,7 +5,7 @@ import chalk from 'chalk';
 
 import { RWSCfgStorage } from '../helpers/_storage';
 
-class ConfigBuilder<ICFG> { 
+class ConfigBuilder<ICFG extends {[key: string]: any}> { 
     cfgData: ICFG;   
     constructor(filePath: string, private _DEFAULT_CONFIG: ICFG) {
         this.cfgData = this.readConfigFile(filePath);
@@ -33,7 +33,7 @@ class ConfigBuilder<ICFG> {
     get(key: string): any {
         this._init();
 
-        return RWSCfgStorage.get(key);
+        return RWSCfgStorage.get(key) ? RWSCfgStorage.get(key) : (Object.keys(this._DEFAULT_CONFIG).includes(key) ? this._DEFAULT_CONFIG[key] : null);
     }
 
     exportDefaultConfig(): ICFG {
