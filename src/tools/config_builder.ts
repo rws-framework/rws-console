@@ -30,10 +30,20 @@ class ConfigBuilder<ICFG extends {[key: string]: any}> {
         return RWSCfgStorage.set(key, value);
     }
 
-    get(key: string): any {
+    get(key: string, defaultPassedValue: any = null): any {
         this._init();
 
-        return RWSCfgStorage.get(key) ? RWSCfgStorage.get(key) : (Object.keys(this._DEFAULT_CONFIG).includes(key) ? this._DEFAULT_CONFIG[key] : null);
+        let theValue = Object.keys(this._DEFAULT_CONFIG).includes(key) ? this._DEFAULT_CONFIG[key] : null;
+
+        const storageValue = RWSCfgStorage.get(key);
+
+        if(storageValue !== null){
+            theValue = storageValue;            
+        }else if(defaultPassedValue !== null){
+            theValue = defaultPassedValue;
+        }                                                                 
+
+        return theValue;
     }
 
     exportDefaultConfig(): ICFG {

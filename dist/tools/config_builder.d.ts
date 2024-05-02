@@ -6,7 +6,7 @@ declare class ConfigBuilder<ICFG extends {
     constructor(filePath: string, _DEFAULT_CONFIG: ICFG);
     readConfigFile(filePath: string): ICFG;
     set(key: string, value: any): any;
-    get(key: string): any;
+    get(key: string, defaultPassedValue?: any): any;
     exportDefaultConfig(): ICFG;
     exportBuildConfig(): ICFG;
     _init(): void;

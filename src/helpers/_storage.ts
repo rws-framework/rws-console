@@ -15,7 +15,7 @@ class Storage {
     }
 
     get(key: string): any {
-        if (!this.has(key)) {
+        if (!this.has(key) || typeof this.data[key] === undefined) {
             return null;
         }
 

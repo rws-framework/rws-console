@@ -50,9 +50,17 @@ class ConfigBuilder {
         this._init();
         return _storage_1.RWSCfgStorage.set(key, value);
     }
-    get(key) {
+    get(key, defaultPassedValue = null) {
         this._init();
-        return _storage_1.RWSCfgStorage.get(key) ? _storage_1.RWSCfgStorage.get(key) : (Object.keys(this._DEFAULT_CONFIG).includes(key) ? this._DEFAULT_CONFIG[key] : null);
+        let theValue = Object.keys(this._DEFAULT_CONFIG).includes(key) ? this._DEFAULT_CONFIG[key] : null;
+        const storageValue = _storage_1.RWSCfgStorage.get(key);
+        if (storageValue !== null) {
+            theValue = storageValue;
+        }
+        else if (defaultPassedValue !== null) {
+            theValue = defaultPassedValue;
+        }
+        return theValue;
     }
     exportDefaultConfig() {
         return this._DEFAULT_CONFIG;

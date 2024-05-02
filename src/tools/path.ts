@@ -18,12 +18,28 @@ export function createSymlink(symLinkDir: string, targetDir: string): void {
     });
 }
 
-export function removeDirectory(dirPath: string): void {
+export function removeDirectory(dirPath: string, clearContents = false): void {
     const absoluteDirPath = path.resolve(dirPath);
 
     if (!fs.existsSync(absoluteDirPath)) {
         console.warn(`Directory "${absoluteDirPath}" does not exist.`);
         return;
+    }
+
+    if(clearContents){
+        const entries = fs.readdirSync(dirPath, { withFileTypes: true });
+        
+        entries.forEach(entry => {
+            const fullPath = path.join(dirPath, entry.name);
+            if (entry.isDirectory()) {
+                // Recursively delete directory contents
+                removeDirectory(fullPath);
+            } else {
+                // Delete file
+                fs.unlinkSync(fullPath);
+            }
+        });
+       return;
     }
 
     fs.rm(absoluteDirPath, { recursive: true, force: true }, (err: Error | any) => {

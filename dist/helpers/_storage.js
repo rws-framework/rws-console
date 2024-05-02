@@ -13,7 +13,7 @@ class Storage {
         return this._instance;
     }
     get(key) {
-        if (!this.has(key)) {
+        if (!this.has(key) || typeof this.data[key] === undefined) {
             return null;
         }
         return this.data[key];

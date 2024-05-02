@@ -21,10 +21,25 @@ function createSymlink(symLinkDir, targetDir) {
     });
 }
 exports.createSymlink = createSymlink;
-function removeDirectory(dirPath) {
+function removeDirectory(dirPath, clearContents = false) {
     const absoluteDirPath = path_1.default.resolve(dirPath);
     if (!fs_1.default.existsSync(absoluteDirPath)) {
         console.warn(`Directory "${absoluteDirPath}" does not exist.`);
+        return;
+    }
+    if (clearContents) {
+        const entries = fs_1.default.readdirSync(dirPath, { withFileTypes: true });
+        entries.forEach(entry => {
+            const fullPath = path_1.default.join(dirPath, entry.name);
+            if (entry.isDirectory()) {
+                // Recursively delete directory contents
+                removeDirectory(fullPath);
+            }
+            else {
+                // Delete file
+                fs_1.default.unlinkSync(fullPath);
+            }
+        });
         return;
     }
     fs_1.default.rm(absoluteDirPath, { recursive: true, force: true }, (err) => {

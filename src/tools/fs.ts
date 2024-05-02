@@ -14,6 +14,10 @@ function collectFiles(dir: string, fileList: string[] = []): string[] {
     return fileList;
 }
 
+export function removeDirectory(clearContents = false){
+    
+}
+
 export const copyFiles = async (copyList: Record<string, string[]> = {}, ignored: RegExp[] = []): Promise<void> => {
     const copyQueue: { from: string; to: string }[] = [];
 
