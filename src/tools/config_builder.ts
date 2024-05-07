@@ -11,13 +11,13 @@ class ConfigBuilder<ICFG extends {[key: string]: any}> {
         this.cfgData = this.readConfigFile(filePath);
     }
 
-    readConfigFile(filePath: string): ICFG {
-        if (!fs.existsSync(filePath)) {
-            console.log(chalk.yellow('No .rws.json config file detected. Running default config:'), this._DEFAULT_CONFIG);
+    readConfigFile(filePath: string): ICFG | null {
+        if (!fs.existsSync(filePath)) {            
             return this._DEFAULT_CONFIG;
-        }
+        }        
 
         const fileConfig: ICFG = json5.parse(fs.readFileSync(filePath, 'utf-8'));
+        console.log(chalk.yellow('.rws.json config file detected. Config override:'), fileConfig);
 
         return {
             ...fileConfig,

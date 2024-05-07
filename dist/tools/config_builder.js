@@ -38,10 +38,10 @@ class ConfigBuilder {
     }
     readConfigFile(filePath) {
         if (!fs.existsSync(filePath)) {
-            console.log(chalk_1.default.yellow('No .rws.json config file detected. Running default config:'), this._DEFAULT_CONFIG);
             return this._DEFAULT_CONFIG;
         }
         const fileConfig = json5.parse(fs.readFileSync(filePath, 'utf-8'));
+        console.log(chalk_1.default.yellow('.rws.json config file detected. Config override:'), fileConfig);
         return {
             ...fileConfig,
         };
