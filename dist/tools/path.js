@@ -85,14 +85,14 @@ function findRootWorkspacePath(currentPath) {
         if (packageJson.workspaces) {
             return findRootWorkspacePath(parentPackageDir);
         }
-        else {
-            const parentPackageJsonPath = path_1.default.join(currentPath + '/../..', 'package.json');
-            const parentPackageDir = path_1.default.dirname(parentPackageJsonPath);
-            if (fs_1.default.existsSync(parentPackageJsonPath)) {
-                const packageJson = JSON.parse(fs_1.default.readFileSync(parentPackageJsonPath, 'utf-8'));
-                if (packageJson.workspaces) {
-                    return findRootWorkspacePath(parentPackageDir);
-                }
+    }
+    else {
+        const parentPackageJsonPath = path_1.default.join(currentPath + '/../..', 'package.json');
+        const parentPackageDir = path_1.default.dirname(parentPackageJsonPath);
+        if (fs_1.default.existsSync(parentPackageJsonPath)) {
+            const packageJson = JSON.parse(fs_1.default.readFileSync(parentPackageJsonPath, 'utf-8'));
+            if (packageJson.workspaces) {
+                return findRootWorkspacePath(parentPackageDir);
             }
         }
     }
