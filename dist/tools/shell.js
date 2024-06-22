@@ -1,6 +1,6 @@
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.runCommand = void 0;
+exports.runCommand = runCommand;
 const child_process_1 = require("child_process");
 async function runCommand(command, cwd = null, silent = false) {
     return new Promise((resolve, reject) => {
@@ -22,5 +22,4 @@ async function runCommand(command, cwd = null, silent = false) {
         });
     });
 }
-exports.runCommand = runCommand;
 //# sourceMappingURL=shell.js.map

@@ -3,7 +3,15 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
     return (mod && mod.__esModule) ? mod : { "default": mod };
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.relativize = exports.getActiveWorkSpaces = exports.findPackageDir = exports.findRootWorkspacePath = exports.removeWorkspacePackages = exports.linkWorkspace = exports.linkWorkspaces = exports.removeDirectory = exports.createSymlink = void 0;
+exports.createSymlink = createSymlink;
+exports.removeDirectory = removeDirectory;
+exports.linkWorkspaces = linkWorkspaces;
+exports.linkWorkspace = linkWorkspace;
+exports.removeWorkspacePackages = removeWorkspacePackages;
+exports.findRootWorkspacePath = findRootWorkspacePath;
+exports.findPackageDir = findPackageDir;
+exports.getActiveWorkSpaces = getActiveWorkSpaces;
+exports.relativize = relativize;
 const path_1 = __importDefault(require("path"));
 const fs_1 = __importDefault(require("fs"));
 function createSymlink(symLinkDir, targetDir) {
@@ -20,7 +28,6 @@ function createSymlink(symLinkDir, targetDir) {
         console.log(`Symlink created: ${absolutePathForLink} -> ${absoluteTarget}`);
     });
 }
-exports.createSymlink = createSymlink;
 function removeDirectory(dirPath, clearContents = false) {
     const absoluteDirPath = path_1.default.resolve(dirPath);
     if (!fs_1.default.existsSync(absoluteDirPath)) {
@@ -50,21 +57,18 @@ function removeDirectory(dirPath, clearContents = false) {
         console.log(`Directory removed: ${absoluteDirPath}`);
     });
 }
-exports.removeDirectory = removeDirectory;
 function linkWorkspaces(packageJsonPath, rootDir) {
     const packageJson = JSON.parse(fs_1.default.readFileSync(packageJsonPath, 'utf-8'));
     packageJson.workspaces.forEach((workspace) => {
         linkWorkspace(workspace, rootDir);
     });
 }
-exports.linkWorkspaces = linkWorkspaces;
 function linkWorkspace(workspace, rootDir) {
     if (fs_1.default.existsSync(`${rootDir}/${workspace}/node_modules`)) {
         removeDirectory(`${rootDir}/${workspace}/node_modules`);
     }
     createSymlink(`${rootDir}/node_modules`, `${rootDir}/${workspace}/node_modules`);
 }
-exports.linkWorkspace = linkWorkspace;
 function removeWorkspacePackages(packageJsonPath, rootDir) {
     const packageJson = JSON.parse(fs_1.default.readFileSync(packageJsonPath, 'utf-8'));
     packageJson.workspaces.forEach((workspace) => {
@@ -73,7 +77,6 @@ function removeWorkspacePackages(packageJsonPath, rootDir) {
         }
     });
 }
-exports.removeWorkspacePackages = removeWorkspacePackages;
 function findRootWorkspacePath(currentPath) {
     const parentPackageJsonPath = path_1.default.join(currentPath + '/..', 'package.json');
     const parentPackageDir = path_1.default.dirname(parentPackageJsonPath);
@@ -82,10 +85,19 @@ function findRootWorkspacePath(currentPath) {
         if (packageJson.workspaces) {
             return findRootWorkspacePath(parentPackageDir);
         }
+        else {
+            const parentPackageJsonPath = path_1.default.join(currentPath + '/../..', 'package.json');
+            const parentPackageDir = path_1.default.dirname(parentPackageJsonPath);
+            if (fs_1.default.existsSync(parentPackageJsonPath)) {
+                const packageJson = JSON.parse(fs_1.default.readFileSync(parentPackageJsonPath, 'utf-8'));
+                if (packageJson.workspaces) {
+                    return findRootWorkspacePath(parentPackageDir);
+                }
+            }
+        }
     }
     return currentPath;
 }
-exports.findRootWorkspacePath = findRootWorkspacePath;
 function findPackageDir(currentPath, i = 0) {
     if (i > 10) {
         throw new Error('Too much recursion applied. Create package.json somewhere in: ' + currentPath);
@@ -98,7 +110,6 @@ function findPackageDir(currentPath, i = 0) {
     const parentPackageDir = path_1.default.dirname(parentPackageJsonPath);
     return findPackageDir(parentPackageDir, i + 1);
 }
-exports.findPackageDir = findPackageDir;
 function getActiveWorkSpaces(currentPath, mode = 'all') {
     if (!currentPath) {
         throw new Error('[_tools.ts:getActiveWorkSpaces] "currentPath" argument is required.');
@@ -127,7 +138,6 @@ function getActiveWorkSpaces(currentPath, mode = 'all') {
     }
     return [currentPath];
 }
-exports.getActiveWorkSpaces = getActiveWorkSpaces;
 function relativize(inputPath, relationBase = null) {
     if (relationBase === null && !!process && typeof process.cwd === 'function') {
         relationBase = process.cwd();
@@ -137,5 +147,4 @@ function relativize(inputPath, relationBase = null) {
     }
     return inputPath;
 }
-exports.relativize = relativize;
 //# sourceMappingURL=path.js.map

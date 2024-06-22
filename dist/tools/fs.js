@@ -3,7 +3,8 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
     return (mod && mod.__esModule) ? mod : { "default": mod };
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.copyFiles = exports.removeDirectory = void 0;
+exports.copyFiles = void 0;
+exports.removeDirectory = removeDirectory;
 const fs_1 = __importDefault(require("fs"));
 const chalk_1 = __importDefault(require("chalk"));
 const path_1 = __importDefault(require("path"));
@@ -21,7 +22,6 @@ function collectFiles(dir, fileList = []) {
 }
 function removeDirectory(clearContents = false) {
 }
-exports.removeDirectory = removeDirectory;
 const copyFiles = async (copyList = {}, ignored = []) => {
     const copyQueue = [];
     Object.keys(copyList).forEach((targetPath) => {

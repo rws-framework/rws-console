@@ -1,4 +1,3 @@
-/// <reference types="node" />
 import * as readline from 'readline';
 import { Command } from 'commander';
 import { IOutputOpts, RWSInputType } from './_run';

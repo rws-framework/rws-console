@@ -86,6 +86,16 @@ export function findRootWorkspacePath(currentPath: string): string {
 
         if (packageJson.workspaces) {
             return findRootWorkspacePath(parentPackageDir);
+        }else{
+            const parentPackageJsonPath = path.join(currentPath + '/../..', 'package.json');
+            const parentPackageDir = path.dirname(parentPackageJsonPath);
+
+            if (fs.existsSync(parentPackageJsonPath)) {
+                const packageJson = JSON.parse(fs.readFileSync(parentPackageJsonPath, 'utf-8'));
+                if (packageJson.workspaces) {
+                    return findRootWorkspacePath(parentPackageDir);
+                }
+            }
         }
     }
 

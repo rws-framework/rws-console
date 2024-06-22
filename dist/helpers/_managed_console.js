@@ -26,7 +26,9 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
     return (mod && mod.__esModule) ? mod : { "default": mod };
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.bootstrap = exports.RWSCliBootstrap = exports.loadAction = exports.RWSManagedConsole = void 0;
+exports.RWSCliBootstrap = exports.RWSManagedConsole = void 0;
+exports.loadAction = loadAction;
+exports.bootstrap = bootstrap;
 const readline = __importStar(require("readline"));
 const chalk_1 = __importDefault(require("chalk"));
 const path_1 = __importDefault(require("path"));
@@ -83,7 +85,6 @@ exports.RWSManagedConsole = {
 async function loadAction(actionName, actionsDir) {
     return (await Promise.resolve(`${path_1.default.resolve(`${actionsDir}/${actionName}Action.js`)}`).then(s => __importStar(require(s)))).default;
 }
-exports.loadAction = loadAction;
 class RWSCliBootstrap {
     constructor(actions, actionsDir) {
         this.actions = actions;
@@ -109,5 +110,4 @@ function bootstrap(actions, actionsDir) {
     });
     return new RWSCliBootstrap(actionsToLoad, actionsDir);
 }
-exports.bootstrap = bootstrap;
 //# sourceMappingURL=_managed_console.js.map
