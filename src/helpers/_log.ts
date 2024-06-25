@@ -77,7 +77,7 @@ const consoleLogHelper = {
         console.log(...obj);  
     },
     colorObject(obj: any): string {
-        const _JSON_COLORS: IJSONColors = {
+        const _JSON_COLORS: {[key:string]: string} = {
             'keys': 'green',
             'objectValue': 'magenta',
             'braces': 'blue',
