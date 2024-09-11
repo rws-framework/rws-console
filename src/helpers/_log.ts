@@ -64,7 +64,7 @@ const consoleLogHelper = {
 
         console.log(...obj);  
     },
-    rwsLog(...obj: string[]): void {
+    log(...obj: string[]): void {
         let intro = 'RWS CLI ERROR';
 
         if(obj.length > 1 && typeof obj[0] === 'string'){

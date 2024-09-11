@@ -8,7 +8,7 @@ const { v4 } = require('uuid');
 
 
 const uuid = v4;
-const rwsLog = console.log;
+const log = console.log;
 const { copyFiles } = RWSConsole.rwsFS;
 const rwsError = console.error;
 

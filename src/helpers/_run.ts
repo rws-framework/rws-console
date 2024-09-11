@@ -26,6 +26,8 @@ export type RWSInputType = { proxy?: boolean, options?: RWSInputOptsType, args?:
 const runCmd = async (action: Promise<IRWSCliActionType>, argsOpts: RWSInputType = {}): Promise<Command> => {     
     const program = cmdFactory;          
     let theArgs = argsOpts?.args || [];
+    
+  
 
     const programCommand = program.command(`${process.argv[2]} ${(theArgs.map(it => `<${it}>`) || []).join(' ')}`) // Capture variadic arguments for the command
 
@@ -33,8 +35,8 @@ const runCmd = async (action: Promise<IRWSCliActionType>, argsOpts: RWSInputType
         programCommand.option(`-${opt.short}, --${opt.long} <opt-value>`, opt.desc, opt.parseArg, opt.defaultValue);
     }
 
-    for(const opt of argsOpts?.args || []){
-        //args
+    for(const arg of argsOpts?.args || []){
+        programCommand.argument(arg)
     }
 
     const options: OptionValues = {};        

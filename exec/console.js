@@ -3,7 +3,7 @@
 const RWSConsole = require('../dist/index');
 const path = require('path');
 const rwsError = console.error;
-const rwsLog = console.log;
+const log = console.log;
 const getArgs = RWSConsole.rwsArgsHelper;
 
 const bootstrap = RWSConsole.rwsCli.bootstrap(['test'], __dirname + '/actions');
