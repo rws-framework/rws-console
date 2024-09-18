@@ -14,8 +14,8 @@ const runCmd = async (action, argsOpts = {}) => {
     for (const opt of (argsOpts === null || argsOpts === void 0 ? void 0 : argsOpts.options) || []) {
         programCommand.option(`-${opt.short}, --${opt.long} <opt-value>`, opt.desc, opt.parseArg, opt.defaultValue);
     }
-    for (const opt of (argsOpts === null || argsOpts === void 0 ? void 0 : argsOpts.args) || []) {
-        //args
+    for (const arg of (argsOpts === null || argsOpts === void 0 ? void 0 : argsOpts.args) || []) {
+        programCommand.argument(arg);
     }
     const options = {};
     const totalMemoryBytes = os_1.default.totalmem();
