@@ -1,7 +1,12 @@
+import { rwsPath } from '../';
+import fs from 'fs';
+
 interface IRWSRuntimeHelper {    
         _startTime: [number, number] | null;
         startExecTimeRecord: () => void;
         endExecTimeRecord: () => number;
+        getRWSVar: (fileName: string) => string | null;
+        setRWSVar: (fileName: string, value: string) => void;
 };
 
 const RWSRuntimeHelper: IRWSRuntimeHelper = {
@@ -22,6 +27,32 @@ const RWSRuntimeHelper: IRWSRuntimeHelper = {
         this._startTime = null;
 
         return Math.round(elapsed[0] * 1000 + elapsed[1] / 1e6);
+    },
+    getRWSVar(fileName: string): string | null
+    {
+        const packageDir = rwsPath.findRootWorkspacePath(process.cwd());    
+        const moduleCfgDir = `${packageDir}/node_modules/.rws`;
+
+        if(!fs.existsSync(`${moduleCfgDir}/${fileName}`)){
+            return;
+        }
+
+        try{
+            return fs.readFileSync(`${moduleCfgDir}/${fileName}`, 'utf-8');
+        } catch (e: any){
+            return null;
+        }
+    },   
+    setRWSVar(fileName: string, value: string)
+    {
+        const packageDir = rwsPath.findRootWorkspacePath(process.cwd());    
+        const moduleCfgDir = `${packageDir}/node_modules/.rws`;
+
+        if(!fs.existsSync(moduleCfgDir)){
+            fs.mkdirSync(moduleCfgDir);
+        }
+
+        fs.writeFileSync(`${moduleCfgDir}/${fileName}`, value);
     }
 }
 
