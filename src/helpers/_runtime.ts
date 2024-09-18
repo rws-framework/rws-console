@@ -7,6 +7,7 @@ interface IRWSRuntimeHelper {
         endExecTimeRecord: () => number;
         getRWSVar: (fileName: string) => string | null;
         setRWSVar: (fileName: string, value: string) => void;
+        removeRWSVar: (fileName: string) => string | null;
 };
 
 const RWSRuntimeHelper: IRWSRuntimeHelper = {
@@ -27,6 +28,17 @@ const RWSRuntimeHelper: IRWSRuntimeHelper = {
         this._startTime = null;
 
         return Math.round(elapsed[0] * 1000 + elapsed[1] / 1e6);
+    },
+    removeRWSVar(fileName: string): string | null
+    {
+        const packageDir = rwsPath.findRootWorkspacePath(process.cwd());    
+        const moduleCfgDir = `${packageDir}/node_modules/.rws`;
+
+        if(!fs.existsSync(`${moduleCfgDir}/${fileName}`)){
+            return;
+        }
+
+        fs.unlinkSync(`${moduleCfgDir}/${fileName}`);
     },
     getRWSVar(fileName: string): string | null
     {
