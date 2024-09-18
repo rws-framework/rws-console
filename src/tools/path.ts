@@ -77,7 +77,10 @@ export function removeWorkspacePackages(packageJsonPath: string, rootDir: string
     });
 }
 
-export function findRootWorkspacePath(currentPath: string): string {
+export function findRootWorkspacePath(currentPath: string = null): string {
+    if(!currentPath){
+        currentPath = process.cwd();
+    }
     const parentPackageJsonPath = path.join(currentPath + '/..', 'package.json');
     const parentPackageDir = path.dirname(parentPackageJsonPath);    
 
@@ -102,7 +105,11 @@ export function findRootWorkspacePath(currentPath: string): string {
     return currentPath;
 }
 
-export function findPackageDir(currentPath: string, i: number = 0): string {
+export function findPackageDir(currentPath: string = null, i: number = 0): string {
+    if(!currentPath){
+        currentPath = process.cwd();
+    }
+
     if(i > 10){
         throw new Error('Too much recursion applied. Create package.json somewhere in: ' + currentPath);
     }
@@ -120,9 +127,10 @@ export function findPackageDir(currentPath: string, i: number = 0): string {
     return findPackageDir(parentPackageDir, i+1);    
 }
 
-export function getActiveWorkSpaces(currentPath: string, mode: 'all' | 'frontend' | 'backend' = 'all'): string[] {
+export function getActiveWorkSpaces(currentPath: string = null, mode: 'all' | 'frontend' | 'backend' = 'all'): string[] {
     if (!currentPath) {
-        throw new Error('[_tools.ts:getActiveWorkSpaces] "currentPath" argument is required.');
+        currentPath = process.cwd();
+        console.warn(`[_tools.ts:getActiveWorkSpaces] "currentPath" argument is required. Defaulting to: "${currentPath}"`);
     }
 
     if (!(['all', 'frontend', 'backend'].includes(mode))) {
