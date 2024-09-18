@@ -20,6 +20,14 @@ const RWSRuntimeHelper = {
         this._startTime = null;
         return Math.round(elapsed[0] * 1000 + elapsed[1] / 1e6);
     },
+    removeRWSVar(fileName) {
+        const packageDir = __1.rwsPath.findRootWorkspacePath(process.cwd());
+        const moduleCfgDir = `${packageDir}/node_modules/.rws`;
+        if (!fs_1.default.existsSync(`${moduleCfgDir}/${fileName}`)) {
+            return;
+        }
+        fs_1.default.unlinkSync(`${moduleCfgDir}/${fileName}`);
+    },
     getRWSVar(fileName) {
         const packageDir = __1.rwsPath.findRootWorkspacePath(process.cwd());
         const moduleCfgDir = `${packageDir}/node_modules/.rws`;
