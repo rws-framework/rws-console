@@ -1,5 +1,7 @@
+import chalk from 'chalk';
 import { rwsPath } from '../';
 import fs from 'fs';
+import path from 'path';
 
 interface IRWSRuntimeHelper {    
         _startTime: [number, number] | null;
@@ -8,6 +10,8 @@ interface IRWSRuntimeHelper {
         getRWSVar: (fileName: string) => string | null;
         setRWSVar: (fileName: string, value: string) => void;
         removeRWSVar: (fileName: string) => string | null;
+        getRwsConfigDir: () => string;
+        createDirsInPath: (filePath: string) => void;
 };
 
 const RWSRuntimeHelper: IRWSRuntimeHelper = {
@@ -31,22 +35,33 @@ const RWSRuntimeHelper: IRWSRuntimeHelper = {
     },
     removeRWSVar(fileName: string): string | null
     {
-        const packageDir = rwsPath.findRootWorkspacePath(process.cwd());    
-        const moduleCfgDir = `${packageDir}/node_modules/.rws`;
+        const moduleCfgDir = this.getRwsConfigDir();
 
         if(!fs.existsSync(`${moduleCfgDir}/${fileName}`)){
             return;
         }
 
         fs.unlinkSync(`${moduleCfgDir}/${fileName}`);
+    },    
+    getRwsConfigDir(): string
+    {        
+        const packageDir = rwsPath.findRootWorkspacePath(process.cwd());            
+ 
+        return `${packageDir}/node_modules/.rws`;
+    },
+    createDirsInPath(filePath: string): void 
+    {
+        const dirPath = path.dirname(filePath);        
+        if (!fs.existsSync(dirPath)) {
+            fs.mkdirSync(dirPath, { recursive: true });            
+        }
     },
     getRWSVar(fileName: string): string | null
-    {
-        const packageDir = rwsPath.findRootWorkspacePath(process.cwd());    
-        const moduleCfgDir = `${packageDir}/node_modules/.rws`;
-
+    {        
+        const moduleCfgDir = this.getRwsConfigDir();
+        
         if(!fs.existsSync(`${moduleCfgDir}/${fileName}`)){
-            return;
+            return null;
         }
 
         try{
@@ -55,16 +70,17 @@ const RWSRuntimeHelper: IRWSRuntimeHelper = {
             return null;
         }
     },   
-    setRWSVar(fileName: string, value: string)
-    {
-        const packageDir = rwsPath.findRootWorkspacePath(process.cwd());    
-        const moduleCfgDir = `${packageDir}/node_modules/.rws`;
 
-        if(!fs.existsSync(moduleCfgDir)){
-            fs.mkdirSync(moduleCfgDir);
+    setRWSVar(fileName: string, value: string): void
+    {    
+        const moduleCfgDir = this.getRwsConfigDir();
+        const fullPath = `${moduleCfgDir}/${fileName}`;
+
+        if(!fs.existsSync(fullPath)){
+            this.createDirsInPath(fullPath);
         }
-
-        fs.writeFileSync(`${moduleCfgDir}/${fileName}`, value);
+        
+        fs.writeFileSync(fullPath, value);
     }
 }
 

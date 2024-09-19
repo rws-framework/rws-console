@@ -6,6 +6,7 @@ Object.defineProperty(exports, "__esModule", { value: true });
 exports.RWSRuntimeHelper = void 0;
 const __1 = require("../");
 const fs_1 = __importDefault(require("fs"));
+const path_1 = __importDefault(require("path"));
 ;
 const RWSRuntimeHelper = {
     _startTime: null,
@@ -21,18 +22,26 @@ const RWSRuntimeHelper = {
         return Math.round(elapsed[0] * 1000 + elapsed[1] / 1e6);
     },
     removeRWSVar(fileName) {
-        const packageDir = __1.rwsPath.findRootWorkspacePath(process.cwd());
-        const moduleCfgDir = `${packageDir}/node_modules/.rws`;
+        const moduleCfgDir = this.getRwsConfigDir();
         if (!fs_1.default.existsSync(`${moduleCfgDir}/${fileName}`)) {
             return;
         }
         fs_1.default.unlinkSync(`${moduleCfgDir}/${fileName}`);
     },
-    getRWSVar(fileName) {
+    getRwsConfigDir() {
         const packageDir = __1.rwsPath.findRootWorkspacePath(process.cwd());
-        const moduleCfgDir = `${packageDir}/node_modules/.rws`;
+        return `${packageDir}/node_modules/.rws`;
+    },
+    createDirsInPath(filePath) {
+        const dirPath = path_1.default.dirname(filePath);
+        if (!fs_1.default.existsSync(dirPath)) {
+            fs_1.default.mkdirSync(dirPath, { recursive: true });
+        }
+    },
+    getRWSVar(fileName) {
+        const moduleCfgDir = this.getRwsConfigDir();
         if (!fs_1.default.existsSync(`${moduleCfgDir}/${fileName}`)) {
-            return;
+            return null;
         }
         try {
             return fs_1.default.readFileSync(`${moduleCfgDir}/${fileName}`, 'utf-8');
@@ -42,12 +51,12 @@ const RWSRuntimeHelper = {
         }
     },
     setRWSVar(fileName, value) {
-        const packageDir = __1.rwsPath.findRootWorkspacePath(process.cwd());
-        const moduleCfgDir = `${packageDir}/node_modules/.rws`;
-        if (!fs_1.default.existsSync(moduleCfgDir)) {
-            fs_1.default.mkdirSync(moduleCfgDir);
+        const moduleCfgDir = this.getRwsConfigDir();
+        const fullPath = `${moduleCfgDir}/${fileName}`;
+        if (!fs_1.default.existsSync(fullPath)) {
+            this.createDirsInPath(fullPath);
         }
-        fs_1.default.writeFileSync(`${moduleCfgDir}/${fileName}`, value);
+        fs_1.default.writeFileSync(fullPath, value);
     }
 };
 exports.RWSRuntimeHelper = RWSRuntimeHelper;
