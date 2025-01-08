@@ -77,29 +77,35 @@ function removeWorkspacePackages(packageJsonPath, rootDir) {
         }
     });
 }
-function findRootWorkspacePath(currentPath = null) {
+function findRootWorkspacePath(currentPath = null, depth = 0) {
     if (!currentPath) {
         currentPath = process.cwd();
     }
-    const parentPackageJsonPath = path_1.default.join(currentPath + '/..', 'package.json');
-    const parentPackageDir = path_1.default.dirname(parentPackageJsonPath);
-    if (fs_1.default.existsSync(parentPackageJsonPath)) {
-        const packageJson = JSON.parse(fs_1.default.readFileSync(parentPackageJsonPath, 'utf-8'));
-        if (packageJson.workspaces) {
-            return findRootWorkspacePath(parentPackageDir);
-        }
+    // Prevent infinite recursion by limiting depth to 10
+    if (depth >= 10) {
+        return currentPath;
     }
-    else {
-        const parentPackageJsonPath = path_1.default.join(currentPath + '/../..', 'package.json');
-        const parentPackageDir = path_1.default.dirname(parentPackageJsonPath);
-        if (fs_1.default.existsSync(parentPackageJsonPath)) {
-            const packageJson = JSON.parse(fs_1.default.readFileSync(parentPackageJsonPath, 'utf-8'));
-            if (packageJson.workspaces) {
-                return findRootWorkspacePath(parentPackageDir);
+    const packageLockPath = path_1.default.join(currentPath, 'package.json');
+    // Check if package-lock.json exists and has workspaces
+    if (fs_1.default.existsSync(packageLockPath)) {
+        try {
+            const packageLock = JSON.parse(fs_1.default.readFileSync(packageLockPath, 'utf-8'));
+            if (packageLock.workspaces) {
+                return currentPath;
             }
         }
+        catch (e) {
+            console.warn(`Error reading package.json at ${packageLockPath}:`, e);
+        }
     }
-    return currentPath;
+    // If we haven't found a workspace root, check the parent directory
+    const parentDir = path_1.default.dirname(currentPath);
+    // If we've reached the root directory, stop searching
+    if (parentDir === currentPath) {
+        return currentPath;
+    }
+    // Recursively check the parent directory
+    return findRootWorkspacePath(parentDir, depth + 1);
 }
 function findPackageDir(currentPath = null, i = 0) {
     if (!currentPath) {

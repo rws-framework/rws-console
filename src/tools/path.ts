@@ -77,32 +77,40 @@ export function removeWorkspacePackages(packageJsonPath: string, rootDir: string
     });
 }
 
-export function findRootWorkspacePath(currentPath: string = null): string {
-    if(!currentPath){
+export function findRootWorkspacePath(currentPath: string = null, depth: number = 0): string {
+    if (!currentPath) {
         currentPath = process.cwd();
+    }    
+
+    // Prevent infinite recursion by limiting depth to 10
+    if (depth >= 10) {
+        return currentPath;
     }
-    const parentPackageJsonPath = path.join(currentPath + '/..', 'package.json');
-    const parentPackageDir = path.dirname(parentPackageJsonPath);    
 
-    if (fs.existsSync(parentPackageJsonPath)) {
-        const packageJson = JSON.parse(fs.readFileSync(parentPackageJsonPath, 'utf-8'));
-
-        if (packageJson.workspaces) {
-            return findRootWorkspacePath(parentPackageDir);
-        }
-    }else{
-        const parentPackageJsonPath = path.join(currentPath + '/../..', 'package.json');     
-        const parentPackageDir = path.dirname(parentPackageJsonPath);
-
-        if (fs.existsSync(parentPackageJsonPath)) {
-            const packageJson = JSON.parse(fs.readFileSync(parentPackageJsonPath, 'utf-8'));
-            if (packageJson.workspaces) {
-                return findRootWorkspacePath(parentPackageDir);
+    const packageLockPath = path.join(currentPath, 'package.json');
+    
+    // Check if package-lock.json exists and has workspaces
+    if (fs.existsSync(packageLockPath)) {
+        try {
+            const packageLock = JSON.parse(fs.readFileSync(packageLockPath, 'utf-8'));
+            if (packageLock.workspaces) {
+                return currentPath;
             }
+        } catch (e) {
+            console.warn(`Error reading package.json at ${packageLockPath}:`, e);
         }
     }
 
-    return currentPath;
+    // If we haven't found a workspace root, check the parent directory
+    const parentDir = path.dirname(currentPath);
+    
+    // If we've reached the root directory, stop searching
+    if (parentDir === currentPath) {
+        return currentPath;
+    }
+
+    // Recursively check the parent directory
+    return findRootWorkspacePath(parentDir, depth + 1);
 }
 
 export function findPackageDir(currentPath: string = null, i: number = 0): string {

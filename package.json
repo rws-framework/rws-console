@@ -1,6 +1,6 @@
 {
   "name": "@rws-framework/console",
-  "version": "0.3.15",
+  "version": "0.3.16",
   "private": false,
   "description": "",
   "author": "papablack",
@@ -27,7 +27,7 @@
     "@types/node": "^20.12.7",
     "tsc": "^2.0.4",
     "tsc-watch": "^6.2.0",
-    "typescript": "^5.4.5"
+    "typescript": "^5.7.2"
   },
   "repository": {
     "type": "git",
