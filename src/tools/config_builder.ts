@@ -5,13 +5,13 @@ import chalk from 'chalk';
 
 import { RWSCfgStorage } from '../helpers/_storage';
 
-class ConfigBuilder<ICFG extends {[key: string]: any}> { 
+class ConfigBuilder<ICFG extends object = {}> {
     cfgData: ICFG;   
     constructor(filePath: string, private _DEFAULT_CONFIG: ICFG) {
         this.cfgData = this.readConfigFile(filePath);
     }
 
-    readConfigFile(filePath: string): ICFG | null {
+    readConfigFile(filePath: string): ICFG {
         if (!fs.existsSync(filePath)) {            
             return this._DEFAULT_CONFIG;
         }        
