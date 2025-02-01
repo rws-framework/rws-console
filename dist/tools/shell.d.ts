@@ -1,1 +1,5 @@
-export declare function runCommand(command: string, cwd?: string | null, silent?: boolean): Promise<void>;
+interface CMDOpts {
+    env?: any;
+}
+export declare function runCommand(command: string, cwd?: string | null, silent?: boolean, options?: CMDOpts): Promise<void>;
+export {};

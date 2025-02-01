@@ -33,7 +33,7 @@ class ConfigBuilder<ICFG extends object = {}> {
     get(key: string, defaultPassedValue: any = null): any {
         this._init();
 
-        let theValue = Object.keys(this._DEFAULT_CONFIG).includes(key) ? this._DEFAULT_CONFIG[key] : null;
+        let theValue = Object.keys(this._DEFAULT_CONFIG).includes(key) ? this._DEFAULT_CONFIG[key as keyof ICFG] : null;
 
         const storageValue = RWSCfgStorage.get(key);
 

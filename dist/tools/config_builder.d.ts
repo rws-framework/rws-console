@@ -1,10 +1,8 @@
-declare class ConfigBuilder<ICFG extends {
-    [key: string]: any;
-}> {
+declare class ConfigBuilder<ICFG extends object = {}> {
     private _DEFAULT_CONFIG;
     cfgData: ICFG;
     constructor(filePath: string, _DEFAULT_CONFIG: ICFG);
-    readConfigFile(filePath: string): ICFG | null;
+    readConfigFile(filePath: string): ICFG;
     set(key: string, value: any): any;
     get(key: string, defaultPassedValue?: any): any;
     exportDefaultConfig(): ICFG;
