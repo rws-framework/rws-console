@@ -1,4 +1,4 @@
-import { spawn } from 'child_process';
+import { spawn, SpawnOptions, StdioOptions } from 'child_process';
 
 interface CMDOpts {
     env?: any
@@ -6,13 +6,10 @@ interface CMDOpts {
 
 export async function runCommand(command: string, cwd: string | null = null, silent: boolean = false, options: CMDOpts = {}): Promise<void> {
     return new Promise((resolve, reject) => {
-        const [cmd, ...args] = command.split(' ');
-
         if (!cwd) {
             if(!silent){
                 console.log(`[RWS] Setting default CWD for "${command}"`);
             }
-
             cwd = process.cwd();
         }
 
@@ -20,7 +17,21 @@ export async function runCommand(command: string, cwd: string | null = null, sil
             console.log(`[RWS] Running command "${command}" from "${cwd}"`);
         }
 
-        const spawned = spawn(cmd, args, { stdio: silent ? 'ignore' : 'inherit', cwd, env: options?.env });
+        const isWindows = process.platform === 'win32';
+        
+        const spawnOptions: SpawnOptions = {
+            stdio: silent ? 'ignore' : 'inherit' as StdioOptions,
+            cwd,
+            env: options?.env,
+            ...(isWindows ? {
+                shell: true,
+                windowsVerbatimArguments: true
+            } : {})
+        };
+
+        const spawned = isWindows 
+            ? spawn(command, [], spawnOptions)
+            : spawn(command.split(' ')[0], command.split(' ').slice(1), spawnOptions);
 
         spawned.on('exit', (code) => {
             if (code !== 0) {
