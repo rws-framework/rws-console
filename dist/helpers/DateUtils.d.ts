@@ -1,0 +1,36 @@
+type DateUtilsTimeUnits = 'seconds' | 'minutes' | 'hours' | 'days' | 'milliseconds';
+export declare class DateUtils {
+    private _date;
+    static DEFAULT_TIMEZONE: string;
+    private _tz;
+    constructor(input?: string | number | Date, tz?: string);
+    get date(): Date;
+    get tz(): string;
+    formatDate(formatString?: string): string;
+    format(formatString?: string): string;
+    formatToTimezone(timezone?: string): string;
+    formatToISO(): string;
+    timestamp(): number;
+    addDays(days: number): DateUtils;
+    subtractDays(days: number): DateUtils;
+    addHours(hours: number): DateUtils;
+    subtractHours(hours: number): DateUtils;
+    addMinutes(minutes: number): DateUtils;
+    subtractMinutes(minutes: number): DateUtils;
+    isAfter(date: Date | string | DateUtils): boolean;
+    isBefore(date: Date | string | DateUtils): boolean;
+    isEqual(date: Date | string | DateUtils): boolean;
+    getYear(): number;
+    getMonth(): number;
+    getDay(): number;
+    getHours(): number;
+    getMinutes(): number;
+    getSeconds(): number;
+    set(value: number, element: 'days' | 'months' | 'hours' | 'minutes' | 'seconds' | 'miliseconds'): this;
+    static diff(date1: DateUtils, date2: DateUtils, unit?: DateUtilsTimeUnits): number;
+    static formatMsTo(ms: number, toFormat?: DateUtilsTimeUnits): number;
+    static timeZoneDiff(timezone?: string): number;
+    static now(timezone?: string): DateUtils;
+    static parseDate(dateString: string, timezone?: string): DateUtils;
+}
+export {};
