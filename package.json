@@ -1,6 +1,6 @@
 {
   "name": "@rws-framework/console",
-  "version": "1.0.1",
+  "version": "1.0.2",
   "private": false,
   "description": "",
   "author": "papablack",
@@ -20,7 +20,9 @@
     "json5": "^2.2.3",
     "pino": "^8.15.1",
     "pino-colada": "^2.2.2",
-    "pino-pretty": "^10.2.0"
+    "pino-pretty": "^10.2.0",
+    "date-fns": "^4.1.0",
+    "date-fns-tz": "^3.2.0"
   },
   "devDependencies": {
     "@types/node": "^20.12.7",
