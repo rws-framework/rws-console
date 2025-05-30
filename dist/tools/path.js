@@ -90,7 +90,7 @@ function findRootWorkspacePath(currentPath = null, depth = 0) {
     if (fs_1.default.existsSync(packageLockPath)) {
         try {
             const packageLock = JSON.parse(fs_1.default.readFileSync(packageLockPath, 'utf-8'));
-            if (packageLock.workspaces) {
+            if (packageLock.workspaces || packageLock._rws_root) {
                 return currentPath;
             }
         }

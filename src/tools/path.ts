@@ -81,19 +81,22 @@ export function findRootWorkspacePath(currentPath: string = null, depth: number 
     if (!currentPath) {
         currentPath = process.cwd();
     }    
-
+    
     // Prevent infinite recursion by limiting depth to 10
     if (depth >= 10) {
         return currentPath;
     }
 
     const packageLockPath = path.join(currentPath, 'package.json');
+
+
     
     // Check if package-lock.json exists and has workspaces
     if (fs.existsSync(packageLockPath)) {
         try {
-            const packageLock = JSON.parse(fs.readFileSync(packageLockPath, 'utf-8'));
-            if (packageLock.workspaces) {
+            const packageLock = JSON.parse(fs.readFileSync(packageLockPath, 'utf-8'));            
+
+            if (packageLock.workspaces || packageLock._rws_root) {
                 return currentPath;
             }
         } catch (e) {

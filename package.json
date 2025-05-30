@@ -1,6 +1,6 @@
 {
   "name": "@rws-framework/console",
-  "version": "1.0.2",
+  "version": "1.1.0",
   "private": false,
   "description": "",
   "author": "papablack",
@@ -16,7 +16,7 @@
     "rws-console": "exec/console.js"
   },
   "dependencies": {
-    "chalk": "4.1.2",    
+    "chalk": "4.1.2",
     "json5": "^2.2.3",
     "pino": "^8.15.1",
     "pino-colada": "^2.2.2",
@@ -26,7 +26,6 @@
   },
   "devDependencies": {
     "@types/node": "^20.12.7",
-    "tsc": "^2.0.4",
     "tsc-watch": "^6.2.0",
     "typescript": "^5.8.3"
   },
