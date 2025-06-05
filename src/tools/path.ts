@@ -78,15 +78,12 @@ export function removeWorkspacePackages(packageJsonPath: string, rootDir: string
 }
 
 export function findRootWorkspacePath(currentPath: string = null, depth: number = 0): string {
-    const overrideOptionString = [...process.argv].splice(2).find(item => item.startsWith('--execDir'));
-    let overrideDir = null;
+    const overrideOptionString = [...process.argv].splice(2).find(item => item.startsWith('--execDir'));    
     
     if(overrideOptionString){
         const [optionName, overrideVal] = overrideOptionString.split('=');
-        overrideDir = overrideVal.replace(/"/g, '');
-    }
-    
-    console.log('findRootWorkspacePath', overrideDir);
+        return overrideVal.replace(/"/g, '');
+    }    
 
     if (!currentPath) {
         currentPath = process.cwd();
