@@ -78,6 +78,16 @@ export function removeWorkspacePackages(packageJsonPath: string, rootDir: string
 }
 
 export function findRootWorkspacePath(currentPath: string = null, depth: number = 0): string {
+    const overrideOptionString = [...process.argv].splice(2).find(item => item.startsWith('--execDir'));
+    let overrideDir = null;
+    
+    if(overrideOptionString){
+        const [optionName, overrideVal] = overrideOptionString.split('=');
+        overrideDir = overrideVal.replace(/"/g, '');
+    }
+    
+    console.log('findRootWorkspacePath', overrideDir);
+
     if (!currentPath) {
         currentPath = process.cwd();
     }    
@@ -89,8 +99,6 @@ export function findRootWorkspacePath(currentPath: string = null, depth: number 
 
     const packageLockPath = path.join(currentPath, 'package.json');
 
-
-    
     // Check if package-lock.json exists and has workspaces
     if (fs.existsSync(packageLockPath)) {
         try {
