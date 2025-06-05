@@ -113,6 +113,11 @@ function findRootWorkspacePath(currentPath = null, depth = 0) {
     return findRootWorkspacePath(parentDir, depth + 1);
 }
 function findPackageDir(currentPath = null, i = 0) {
+    const overrideOptionString = [...process.argv].splice(2).find(item => item.startsWith('--workspaceDir'));
+    if (overrideOptionString) {
+        const [optionName, overrideVal] = overrideOptionString.split('=');
+        return overrideVal.replace(/"/g, '');
+    }
     if (!currentPath) {
         currentPath = process.cwd();
     }

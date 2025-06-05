@@ -122,6 +122,13 @@ export function findRootWorkspacePath(currentPath: string = null, depth: number 
 }
 
 export function findPackageDir(currentPath: string = null, i: number = 0): string {
+    const overrideOptionString = [...process.argv].splice(2).find(item => item.startsWith('--workspaceDir'));    
+    
+    if(overrideOptionString){
+        const [optionName, overrideVal] = overrideOptionString.split('=');
+        return overrideVal.replace(/"/g, '');
+    }    
+
     if(!currentPath){
         currentPath = process.cwd();
     }
