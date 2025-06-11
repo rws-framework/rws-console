@@ -85,6 +85,11 @@ export function findRootWorkspacePath(currentPath: string = null, depth: number 
         return overrideVal.replace(/"/g, '');
     }    
 
+    
+    if(process.env.CONSOLE_ROOT_PATH){
+        return process.env.CONSOLE_ROOT_PATH;
+    }
+
     if (!currentPath) {
         currentPath = process.cwd();
     }    
@@ -128,6 +133,10 @@ export function findPackageDir(currentPath: string = null, i: number = 0): strin
         const [optionName, overrideVal] = overrideOptionString.split('=');
         return overrideVal.replace(/"/g, '');
     }    
+
+    if(process.env.CONSOLE_ROOT_PATH){
+        return process.env.CONSOLE_ROOT_PATH;
+    }
 
     if(!currentPath){
         currentPath = process.cwd();
