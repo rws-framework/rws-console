@@ -121,8 +121,8 @@ function findPackageDir(currentPath = null, i = 0) {
         const [optionName, overrideVal] = overrideOptionString.split('=');
         return overrideVal.replace(/"/g, '');
     }
-    if (process.env.CONSOLE_ROOT_PATH) {
-        return process.env.CONSOLE_ROOT_PATH;
+    if (process.env.CONSOLE_WORKSPACE_PATH) {
+        return process.env.CONSOLE_WORKSPACE_PATH;
     }
     if (!currentPath) {
         currentPath = process.cwd();

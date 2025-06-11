@@ -134,8 +134,8 @@ export function findPackageDir(currentPath: string = null, i: number = 0): strin
         return overrideVal.replace(/"/g, '');
     }    
 
-    if(process.env.CONSOLE_ROOT_PATH){
-        return process.env.CONSOLE_ROOT_PATH;
+    if(process.env.CONSOLE_WORKSPACE_PATH){
+        return process.env.CONSOLE_WORKSPACE_PATH;
     }
 
     if(!currentPath){
