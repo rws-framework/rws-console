@@ -83,6 +83,9 @@ function findRootWorkspacePath(currentPath = null, depth = 0) {
         const [optionName, overrideVal] = overrideOptionString.split('=');
         return overrideVal.replace(/"/g, '');
     }
+    if (process.env.CONSOLE_ROOT_PATH) {
+        return process.env.CONSOLE_ROOT_PATH;
+    }
     if (!currentPath) {
         currentPath = process.cwd();
     }
@@ -117,6 +120,9 @@ function findPackageDir(currentPath = null, i = 0) {
     if (overrideOptionString) {
         const [optionName, overrideVal] = overrideOptionString.split('=');
         return overrideVal.replace(/"/g, '');
+    }
+    if (process.env.CONSOLE_ROOT_PATH) {
+        return process.env.CONSOLE_ROOT_PATH;
     }
     if (!currentPath) {
         currentPath = process.cwd();
