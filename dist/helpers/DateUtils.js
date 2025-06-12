@@ -40,8 +40,10 @@ exports.DateUtils = void 0;
 const date_fns_1 = __importDefault(require("date-fns"));
 const dateFnsTz = __importStar(require("date-fns-tz"));
 class DateUtils {
+    _date;
+    static DEFAULT_TIMEZONE = process.env.TZ || 'Europe/Warsaw';
+    _tz = DateUtils.DEFAULT_TIMEZONE;
     constructor(input, tz) {
-        this._tz = DateUtils.DEFAULT_TIMEZONE;
         if (input === undefined) {
             this._date = new Date();
         }
@@ -55,7 +57,7 @@ class DateUtils {
             try {
                 this._date = date_fns_1.default.parseISO(input);
             }
-            catch (_a) {
+            catch {
                 const timestamp = parseInt(input, 10);
                 this._date = new Date(timestamp < 10000000000 ? timestamp * 1000 : timestamp);
             }
@@ -200,5 +202,4 @@ class DateUtils {
     }
 }
 exports.DateUtils = DateUtils;
-DateUtils.DEFAULT_TIMEZONE = process.env.TZ || 'Europe/Warsaw';
 //# sourceMappingURL=DateUtils.js.map

@@ -17,7 +17,7 @@ async function runCommand(command, cwd = null, silent = false, options = {}) {
         const spawnOptions = {
             stdio: silent ? 'ignore' : 'inherit',
             cwd,
-            env: options === null || options === void 0 ? void 0 : options.env,
+            env: options?.env,
             ...(isWindows ? {
                 shell: true,
                 windowsVerbatimArguments: true

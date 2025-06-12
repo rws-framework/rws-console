@@ -42,6 +42,8 @@ const json5 = __importStar(require("json5"));
 const chalk_1 = __importDefault(require("chalk"));
 const _storage_1 = require("../helpers/_storage");
 class ConfigBuilder {
+    _DEFAULT_CONFIG;
+    cfgData;
     constructor(filePath, _DEFAULT_CONFIG) {
         this._DEFAULT_CONFIG = _DEFAULT_CONFIG;
         this.cfgData = this.readConfigFile(filePath);

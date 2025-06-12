@@ -2,10 +2,10 @@
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.RWSCfgStorage = void 0;
 class Storage {
-    constructor() {
-        this._loaded = false;
-        this.data = {};
-    }
+    static _instance;
+    _loaded = false;
+    data = {};
+    constructor() { }
     static create() {
         if (!this._instance) {
             this._instance = new Storage();

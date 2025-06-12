@@ -32,8 +32,11 @@ var __importStar = (this && this.__importStar) || (function () {
         return result;
     };
 })();
+var __importDefault = (this && this.__importDefault) || function (mod) {
+    return (mod && mod.__esModule) ? mod : { "default": mod };
+};
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.DateUtils = exports.rwsRuntimeHelper = exports.rwsFS = exports.rwsPath = exports.rwsShell = exports.RWSConfigBuilder = void 0;
+exports.RWSWebpackPlugins = exports.DateUtils = exports.rwsRuntimeHelper = exports.rwsFS = exports.rwsPath = exports.rwsShell = exports.RWSConfigBuilder = void 0;
 const rwsShell = __importStar(require("./tools/shell"));
 exports.rwsShell = rwsShell;
 const rwsPath = __importStar(require("./tools/path"));
@@ -46,4 +49,6 @@ const _runtime_1 = require("./helpers/_runtime");
 Object.defineProperty(exports, "rwsRuntimeHelper", { enumerable: true, get: function () { return _runtime_1.RWSRuntimeHelper; } });
 const DateUtils_1 = require("./helpers/DateUtils");
 Object.defineProperty(exports, "DateUtils", { enumerable: true, get: function () { return DateUtils_1.DateUtils; } });
+const webpack_plugins_1 = __importDefault(require("./webpack_plugins"));
+exports.RWSWebpackPlugins = webpack_plugins_1.default;
 //# sourceMappingURL=index.js.map

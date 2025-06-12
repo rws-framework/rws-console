@@ -5,6 +5,7 @@ import { ConfigBuilder } from './tools/config_builder';
 import { RWSRuntimeHelper as rwsRuntimeHelper }  from './helpers/_runtime';
 import { DateUtils }  from './helpers/DateUtils';
 
+import RWSWebpackPlugins from './webpack_plugins';
 
 export {
     ConfigBuilder as RWSConfigBuilder,
@@ -12,5 +13,6 @@ export {
     rwsPath,
     rwsFS,
     rwsRuntimeHelper,        
-    DateUtils
+    DateUtils,
+    RWSWebpackPlugins
 };

@@ -79,11 +79,11 @@ function removeWorkspacePackages(packageJsonPath, rootDir) {
 }
 function findRootWorkspacePath(currentPath = null, depth = 0) {
     const overrideOptionString = [...process.argv].splice(2).find(item => item.startsWith('--execDir'));
-    if (overrideOptionString) {
+    if (overrideOptionString && !currentPath) {
         const [optionName, overrideVal] = overrideOptionString.split('=');
         return overrideVal.replace(/"/g, '');
     }
-    if (process.env.CONSOLE_ROOT_PATH) {
+    if (process.env.CONSOLE_ROOT_PATH && !currentPath) {
         return process.env.CONSOLE_ROOT_PATH;
     }
     if (!currentPath) {
@@ -117,11 +117,11 @@ function findRootWorkspacePath(currentPath = null, depth = 0) {
 }
 function findPackageDir(currentPath = null, i = 0) {
     const overrideOptionString = [...process.argv].splice(2).find(item => item.startsWith('--workspaceDir'));
-    if (overrideOptionString) {
+    if (overrideOptionString && !currentPath) {
         const [optionName, overrideVal] = overrideOptionString.split('=');
         return overrideVal.replace(/"/g, '');
     }
-    if (process.env.CONSOLE_WORKSPACE_PATH) {
+    if (process.env.CONSOLE_WORKSPACE_PATH && !currentPath) {
         return process.env.CONSOLE_WORKSPACE_PATH;
     }
     if (!currentPath) {
