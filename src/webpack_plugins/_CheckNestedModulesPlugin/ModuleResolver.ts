@@ -146,34 +146,35 @@ export class ModuleResolver {
   findNestedDependency(request: string, issuer: string): string | null {
     if (!issuer || !request) {
       return null;
-    }
+    }   
 
     // Check if it's a problematic module
     if (this.cache.problematicModules.has(request)) {
       const nestedModulePath = this.findNestedProblemModule(request, issuer);
-      if (nestedModulePath) {
+      if (nestedModulePath) {        
         return nestedModulePath;
       }
-    }
+    }    
 
     // Check if it's a dependency we want to track
     if (!this.depsList.some(dep => request.includes(dep))) {
       return null;
     }
+    
 
     const cacheKey = `${request}:${issuer}`;
     if (this.cache.resolvedModules.has(cacheKey)) {
       return this.cache.resolvedModules.get(cacheKey) || null;
-    }
+    }    
 
     const issuerDir = getPackageDir(issuer);
-    if (!issuerDir) return null;
+    if (!issuerDir) return null;    
 
     // Extract the package name from the request
     const packageName = extractPackageName(request);
-
     // Check if the dependency exists in the issuer's node_modules
     const nestedNodeModulesPath = path.join(issuerDir, 'node_modules', packageName);
+
     if (fs.existsSync(nestedNodeModulesPath)) {
       const packageJsonPath = path.join(nestedNodeModulesPath, 'package.json');
       if (fs.existsSync(packageJsonPath)) {
@@ -218,7 +219,6 @@ export class ModuleResolver {
           resolvedPath = path.join(nestedNodeModulesPath, nestedPackageJson.main);
         }
 
-        console.log(`Resolved nested dependency "${request}" to "${resolvedPath}" from issuer "${issuer}"`);
         this.cache.resolvedModules.set(cacheKey, resolvedPath);
         return resolvedPath;
       }

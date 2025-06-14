@@ -226,7 +226,6 @@ class ModuleResolver {
                     // If requesting the package itself, resolve to its main entry
                     resolvedPath = path.join(nestedNodeModulesPath, nestedPackageJson.main);
                 }
-                console.log(`Resolved nested dependency "${request}" to "${resolvedPath}" from issuer "${issuer}"`);
                 this.cache.resolvedModules.set(cacheKey, resolvedPath);
                 return resolvedPath;
             }

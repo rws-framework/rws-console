@@ -1,14 +1,21 @@
-import { Compiler } from 'webpack';
+/**
+ * Webpack plugin that resolves nested dependencies and patches problematic modules
+ */
 export declare class CheckNestedModulesPlugin {
+    private cache;
     private depsList;
-    private resolvedModules;
-    private problematicModules;
-    private patchedFiles;
-    constructor(depsList?: string[], problematicModules?: string[]);
-    private readJSONFile;
-    private findNestedProblemModule;
-    private findNestedDependency;
-    private patchHardcodedImports;
-    private checkAndPatchParse5;
-    apply(compiler: Compiler): void;
+    private moduleResolver;
+    private extraWatchedFiles;
+    /**
+     * Creates a new instance of the CheckNestedModulesPlugin
+     * @param depsList List of dependencies to track
+     * @param problematicModules List of problematic modules to handle
+     */
+    constructor(problematicModules?: string[]);
+    /**
+     * Applies the plugin to the webpack compiler
+     * @param compiler Webpack compiler instance
+     */
+    apply(compiler: any): void;
+    private scanFileDeps;
 }

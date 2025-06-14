@@ -6,4 +6,4 @@
  * particularly focusing on problematic modules like 'entities/decode' and 'entities/escape'.
  */
 
-export { CheckNestedModulesPlugin } from './CheckNestedModulesPlugin';
+export { CheckNestedModulesPlugin } from '../CheckNestedModulesPlugin';

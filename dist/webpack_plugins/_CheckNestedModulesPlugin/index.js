@@ -8,6 +8,6 @@
  */
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.CheckNestedModulesPlugin = void 0;
-var CheckNestedModulesPlugin_1 = require("./CheckNestedModulesPlugin");
+var CheckNestedModulesPlugin_1 = require("../CheckNestedModulesPlugin");
 Object.defineProperty(exports, "CheckNestedModulesPlugin", { enumerable: true, get: function () { return CheckNestedModulesPlugin_1.CheckNestedModulesPlugin; } });
 //# sourceMappingURL=index.js.map

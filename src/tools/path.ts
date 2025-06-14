@@ -149,8 +149,15 @@ export function findPackageDir(currentPath: string = null, i: number = 0): strin
     const packageJsonPath = path.join(currentPath, 'package.json');
 
     if (fs.existsSync(packageJsonPath)) {    
-        return currentPath;
-      
+        const packageJson = JSON.parse(fs.readFileSync(packageJsonPath, 'utf-8'));
+
+        if(
+            Object.keys(packageJson).includes('name') && 
+            Object.keys(packageJson).includes('version') && 
+            Object.keys(packageJson).includes('main')
+        ){
+            return currentPath;
+        }            
     }
 
     const parentPackageJsonPath = path.join(currentPath + '/..', 'package.json');

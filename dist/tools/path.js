@@ -132,7 +132,12 @@ function findPackageDir(currentPath = null, i = 0) {
     }
     const packageJsonPath = path_1.default.join(currentPath, 'package.json');
     if (fs_1.default.existsSync(packageJsonPath)) {
-        return currentPath;
+        const packageJson = JSON.parse(fs_1.default.readFileSync(packageJsonPath, 'utf-8'));
+        if (Object.keys(packageJson).includes('name') &&
+            Object.keys(packageJson).includes('version') &&
+            Object.keys(packageJson).includes('main')) {
+            return currentPath;
+        }
     }
     const parentPackageJsonPath = path_1.default.join(currentPath + '/..', 'package.json');
     const parentPackageDir = path_1.default.dirname(parentPackageJsonPath);
