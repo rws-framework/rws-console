@@ -18,4 +18,5 @@ export declare class CheckNestedModulesPlugin {
      */
     apply(compiler: any): void;
     private scanFileDeps;
+    private addExt;
 }

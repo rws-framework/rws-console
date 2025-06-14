@@ -1,7 +1,11 @@
 "use strict";
+var __importDefault = (this && this.__importDefault) || function (mod) {
+    return (mod && mod.__esModule) ? mod : { "default": mod };
+};
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.CheckNestedModulesPlugin = void 0;
 const ModuleResolver_1 = require("./_CheckNestedModulesPlugin/ModuleResolver");
+const fs_1 = __importDefault(require("fs"));
 const chalk_1 = require("chalk");
 /**
  * Webpack plugin that resolves nested dependencies and patches problematic modules
@@ -60,64 +64,16 @@ class CheckNestedModulesPlugin {
                     return;
                 }
                 const issuer = resolveData.contextInfo.issuer || '';
-                const nestedPath = this.moduleResolver.findNestedDependency(resolveData.request, issuer);
+                let nestedPath = this.moduleResolver.findNestedDependency(resolveData.request, issuer);
                 if (nestedPath) {
-                    // Recursively scan for all dependencies in the resolved file
-                    const allDeps = Array.from(this.scanFileDeps(nestedPath));
-                    console.log({ allDeps });
-                    // Collect these files for extra watching
-                    allDeps.forEach(depFile => this.extraWatchedFiles.add(depFile));
-                    // Override the request with the nested module path
+                    const nestedFile = fs_1.default.readFileSync(this.addExt(nestedPath), 'utf-8').split('\n').filter(s => !s.startsWith('//') && s !== '');
+                    if (nestedFile.length === 1) {
+                        const allDeps = Array.from(this.scanFileDeps(nestedPath, false)).slice(1);
+                        console.log((0, chalk_1.yellow)('Detected redirecting to: '), allDeps[0]);
+                        nestedPath = allDeps[0];
+                    }
+                    console.log((0, chalk_1.yellow)(`Linking "${resolveData.request}" to nested dependency at`), nestedPath);
                     resolveData.request = nestedPath;
-                    console.log((0, chalk_1.yellow)(`Linking "${resolveData.request}" to nested dependency at "${nestedPath}"`));
-                    if (allDeps.length > 1) {
-                        console.log((0, chalk_1.yellow)(`Also including recursively found dependencies:\n${allDeps.slice(1).map(f => '  - ' + f).join('\n')}`));
-                    }
-                }
-            });
-            // Hook into the resolver plugin to handle module resolution
-            const resolver = compiler.resolverFactory.get('normal', {});
-            if (resolver && resolver.hooks && resolver.hooks.resolve) {
-                resolver.hooks.resolve.tapAsync('NestedDependencyResolverPlugin', (request, resolveContext, callback) => {
-                    if (!request.request) {
-                        return callback();
-                    }
-                    // Check if this is a dependency we want to track
-                    const requestStr = request.request; // Now we know it's defined
-                    if (!this.depsList.some(dep => requestStr.includes(dep)) &&
-                        !this.cache.problematicModules.has(requestStr)) {
-                        return callback();
-                    }
-                    const context = typeof request.context === 'string' ? request.context : '';
-                    const nestedPath = this.moduleResolver.findNestedDependency(requestStr, context);
-                    if (nestedPath) {
-                        const newRequest = { ...request, request: nestedPath };
-                        return resolver.doResolve(resolver.hooks.resolve, newRequest, `Resolved to nested dependency: ${nestedPath}`, resolveContext, callback);
-                    }
-                    return callback();
-                });
-            }
-        });
-        // Add hook to handle missing modules
-        compiler.hooks.compilation.tap('NestedDependencyResolverPlugin', (compilation) => {
-            // Monitor loaded modules to detect nested dependencies
-            compilation.hooks.succeedModule.tap('NestedDependencyResolverPlugin', (module) => {
-                if (module.request) {
-                    const request = module.request;
-                    const resource = module.resource;
-                    // Check if this is a module we're interested in
-                    if (this.depsList.some(dep => request.includes(dep))) {
-                        // Register nested dependencies for this module
-                        this.moduleResolver.registerNestedDependencies(resource, request);
-                    }
-                }
-            });
-            // Add extra watched files to fileDependencies for Webpack watching
-            compilation.hooks.afterSeal.tap('NestedDependencyResolverPlugin', () => {
-                if (compilation.fileDependencies && this.extraWatchedFiles.size) {
-                    for (const file of this.extraWatchedFiles) {
-                        compilation.fileDependencies.add(file);
-                    }
                 }
             });
         });
@@ -141,12 +97,10 @@ class CheckNestedModulesPlugin {
             }
         });
     }
-    scanFileDeps(filePath, seen = new Set()) {
+    scanFileDeps(filePath, recursively = true, seen = new Set()) {
         const fs = require('fs');
         const path = require('path');
-        if (!fs.existsSync(filePath) && !filePath.endsWith('.js')) {
-            filePath = filePath + '.js';
-        }
+        filePath = this.addExt(filePath);
         if (!fs.existsSync(filePath)) {
             throw new Error((0, chalk_1.red)(`File not found: ${filePath}`));
         }
@@ -154,7 +108,7 @@ class CheckNestedModulesPlugin {
         if (!seen.has(filePath)) {
             seen.add(filePath);
         }
-        console.log((0, chalk_1.yellow)(`[scanFileDeps] Scanning: ${filePath}`));
+        console.log(`Scanning: ${filePath}`);
         const content = fs.readFileSync(filePath, 'utf-8');
         // Simple regex for require/import (does not cover all cases)
         const requireRegex = /require\(['"]([^'"\)]+)['"]\)/g;
@@ -169,17 +123,15 @@ class CheckNestedModulesPlugin {
             let depPath = null;
             let isProblematicModuleFile = false;
             if (dep.startsWith('.') || dep.startsWith('/')) {
-                depPath = path.resolve(path.dirname(filePath), dep);
-                if (!fs.existsSync(depPath) && !depPath.endsWith('.js') && fs.existsSync(depPath + '.js')) {
-                    depPath += '.js';
-                }
-                // If the resolved file is inside any problematic module directory, always add and scan
+                depPath = this.addExt(path.resolve(path.dirname(filePath), dep));
                 for (const problematicModule of this.cache.problematicModules) {
                     const baseDir = path.sep + 'node_modules' + path.sep + problematicModule.split('/')[0] + path.sep;
                     if (depPath.includes(baseDir)) {
                         if (!seen.has(depPath) && fs.existsSync(depPath)) {
                             seen.add(depPath);
-                            this.scanFileDeps(depPath, seen);
+                            if (recursively) {
+                                this.scanFileDeps(depPath, recursively, seen);
+                            }
                         }
                         // Do not process further for this dep
                         depPath = null;
@@ -187,18 +139,23 @@ class CheckNestedModulesPlugin {
                     }
                 }
             }
-            if (depPath) {
-                if (this.depsList.some(d => dep.includes(d)) ||
-                    this.cache.problematicModules.has(dep)) {
-                    depPath = this.moduleResolver.findNestedDependency(dep, path.dirname(filePath));
-                }
-                if (depPath && !seen.has(depPath) && fs.existsSync(depPath)) {
-                    seen.add(depPath);
-                    this.scanFileDeps(depPath, seen);
-                }
-            }
+            // if (depPath) {
+            //   if (
+            //     this.depsList.some(d => dep.includes(d)) ||
+            //     this.cache.problematicModules.has(dep)
+            //   ) {
+            //     depPath = this.moduleResolver.findNestedDependency(dep, path.dirname(filePath));
+            //   }
+            //   if (depPath && !seen.has(depPath) && fs.existsSync(depPath)) {
+            //     seen.add(depPath);
+            //     this.scanFileDeps(depPath, seen);
+            //   }
+            // }
         }
         return seen;
+    }
+    addExt(depPath) {
+        return !fs_1.default.existsSync(depPath) && !depPath.endsWith('.js') && fs_1.default.existsSync(depPath + '.js') ? `${depPath}.js` : depPath;
     }
 }
 exports.CheckNestedModulesPlugin = CheckNestedModulesPlugin;

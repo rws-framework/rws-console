@@ -1,6 +1,6 @@
 import { ModuleCache } from './_CheckNestedModulesPlugin/types';
 import { ModuleResolver } from './_CheckNestedModulesPlugin/ModuleResolver';
-
+import fs from 'fs';
 import { red, green, yellow } from 'chalk';
 
 /**
@@ -12,7 +12,7 @@ export class CheckNestedModulesPlugin {
     problematicModules: new Set<string>(),
     patchedFiles: new Set<string>()
   };
-  
+
   private depsList: string[] = [];
   private moduleResolver: ModuleResolver;
   private extraWatchedFiles = new Set<string>();
@@ -22,32 +22,32 @@ export class CheckNestedModulesPlugin {
    * @param depsList List of dependencies to track
    * @param problematicModules List of problematic modules to handle
    */
-  constructor(    
+  constructor(
     problematicModules: string[] = ['entities']
   ) {
     // Convert the array to a Set for faster lookups
-    this.cache.problematicModules = new Set(problematicModules);    
-    
+    this.cache.problematicModules = new Set(problematicModules);
+
     // Add base packages from problematicModules to the dependencies list
     const basePackages = new Set<string>();
     problematicModules.forEach(module => {
       const packageName = module.split('/')[0];
       basePackages.add(packageName);
     });
-    
+
     // Add all base packages to depsList if they're not already there
     basePackages.forEach(pkg => {
       if (!this.depsList.includes(pkg)) {
         this.depsList.push(pkg);
       }
     });
-    
+
     // Initialize helper classes
     this.moduleResolver = new ModuleResolver(this.cache, this.depsList);
-    
+
     console.log(`NestedDependencyResolverPlugin initialized with dependencies: ${this.depsList.join(', ')}`);
 
-    if(this.cache.problematicModules.size){
+    if (this.cache.problematicModules.size) {
       console.log(yellow(`Problematic modules: ${Array.from(this.cache.problematicModules).join(', ')}`));
     }
   }
@@ -60,110 +60,48 @@ export class CheckNestedModulesPlugin {
     // Hook into the resolver to intercept module resolution
     compiler.hooks.normalModuleFactory.tap('NestedDependencyResolverPlugin', (factory: any) => {
       // Intercept the module resolution process
-      factory.hooks.beforeResolve.tap('NestedDependencyResolverPlugin', (resolveData: any) => { 
+      factory.hooks.beforeResolve.tap('NestedDependencyResolverPlugin', (resolveData: any) => {
         if (!resolveData || !resolveData.request) {
           return;
         }
-        
+
+
         // Check if this is a dependency we want to track
-        if (!this.depsList.some(dep => resolveData.request.includes(dep)) && 
-            !this.cache.problematicModules.has(resolveData.request)) {
+        if (!this.depsList.some(dep => resolveData.request.includes(dep)) &&
+          !this.cache.problematicModules.has(resolveData.request)) {
           return;
         }
 
         const issuer = resolveData.contextInfo.issuer || '';
-        const nestedPath = this.moduleResolver.findNestedDependency(resolveData.request, issuer);        
+        let nestedPath = this.moduleResolver.findNestedDependency(resolveData.request, issuer);
 
         if (nestedPath) {
-          // Recursively scan for all dependencies in the resolved file
-          const allDeps = Array.from(this.scanFileDeps(nestedPath));
+         
+          const nestedFile = fs.readFileSync(this.addExt(nestedPath), 'utf-8').split('\n').filter(s => !s.startsWith('//') && s !== '');
 
-          console.log({allDeps});
-          // Collect these files for extra watching
-          allDeps.forEach(depFile => this.extraWatchedFiles.add(depFile));
-          // Override the request with the nested module path
-          resolveData.request = nestedPath;
-          console.log(yellow(`Linking "${resolveData.request}" to nested dependency at "${nestedPath}"`));
-          if (allDeps.length > 1) {
-            console.log(yellow(`Also including recursively found dependencies:\n${allDeps.slice(1).map(f => '  - ' + f).join('\n')}`));
-          }
-        }
-      });
-
-      // Hook into the resolver plugin to handle module resolution
-      const resolver = (compiler as any).resolverFactory.get('normal', {});
-      if (resolver && resolver.hooks && resolver.hooks.resolve) {
-        resolver.hooks.resolve.tapAsync('NestedDependencyResolverPlugin', 
-          (request: { request?: string; context?: string }, 
-           resolveContext: any, 
-           callback: () => void) => {
-          
-          if (!request.request) {
-            return callback();
+          if (nestedFile.length === 1) {
+            const allDeps = Array.from(this.scanFileDeps(nestedPath, false)).slice(1);            
+            console.log(yellow('Detected redirecting to: '), allDeps[0]);
+            nestedPath = allDeps[0];
           }
 
-          // Check if this is a dependency we want to track
-          const requestStr = request.request; // Now we know it's defined
-          if (!this.depsList.some(dep => requestStr.includes(dep)) && 
-              !this.cache.problematicModules.has(requestStr)) {
-            return callback();
-          }
-
-          const context = typeof request.context === 'string' ? request.context : '';
-          const nestedPath = this.moduleResolver.findNestedDependency(requestStr, context);
-
-          if (nestedPath) {
-            const newRequest = { ...request, request: nestedPath };
-            return resolver.doResolve(
-              resolver.hooks.resolve,
-              newRequest,
-              `Resolved to nested dependency: ${nestedPath}`,
-              resolveContext,
-              callback
-            );
-          }
-
-          return callback();
-        });
-      }
-    });
-
-    // Add hook to handle missing modules
-    compiler.hooks.compilation.tap('NestedDependencyResolverPlugin', (compilation: any) => {
-      // Monitor loaded modules to detect nested dependencies
-      compilation.hooks.succeedModule.tap('NestedDependencyResolverPlugin', (module: any) => {
-        if (module.request) {
-          const request = module.request;
-          const resource = module.resource;
-          
-          // Check if this is a module we're interested in
-          if (this.depsList.some(dep => request.includes(dep))) {
-            // Register nested dependencies for this module
-            this.moduleResolver.registerNestedDependencies(resource, request);
-          }
-        }
-      });
-      // Add extra watched files to fileDependencies for Webpack watching
-      compilation.hooks.afterSeal.tap('NestedDependencyResolverPlugin', () => {
-        if (compilation.fileDependencies && this.extraWatchedFiles.size) {
-          for (const file of this.extraWatchedFiles) {
-            compilation.fileDependencies.add(file);
-          }
+           console.log(yellow(`Linking "${resolveData.request}" to nested dependency at`), nestedPath);
+           resolveData.request = nestedPath;
         }
       });
     });
-    
+
     compiler.hooks.done.tap('NestedDependencyResolverPlugin', (stats: any) => {
       console.log(green(`NestedDependencyResolverPlugin resolved ${this.cache.resolvedModules.size} nested dependencies\n`));
       if (stats.hasErrors()) {
         const errors = stats.compilation.errors;
-        
+
         // Check if there are errors related to problematic modules
         for (const problematicModule of this.cache.problematicModules) {
           const basePackage = problematicModule.split('/')[0];
-          const moduleErrors = errors.filter((error: any) => 
+          const moduleErrors = errors.filter((error: any) =>
             error.message && error.message.includes(problematicModule));
-          
+
           if (moduleErrors.length > 0) {
             console.warn(red(`Found ${moduleErrors.length} errors related to ${problematicModule}: \n`));
             moduleErrors.forEach((error: any) => {
@@ -178,23 +116,21 @@ export class CheckNestedModulesPlugin {
     });
   }
 
-  private scanFileDeps(filePath: string, seen = new Set<string>()): Set<string> {
+  private scanFileDeps(filePath: string, recursively = true, seen = new Set<string>()): Set<string> {
     const fs = require('fs');
     const path = require('path');
 
-    if(!fs.existsSync(filePath) && !filePath.endsWith('.js')) {
-      filePath = filePath + '.js';
-    }    
+    filePath = this.addExt(filePath);
 
-    if (!fs.existsSync(filePath)){
+    if (!fs.existsSync(filePath)) {
       throw new Error(red(`File not found: ${filePath}`));
     };
 
     if (!seen.has(filePath)) {
-      seen.add(filePath);      
-    }    
+      seen.add(filePath);
+    }
 
-    console.log(yellow(`[scanFileDeps] Scanning: ${filePath}`));
+    console.log(`Scanning: ${filePath}`);
 
     const content = fs.readFileSync(filePath, 'utf-8');
     // Simple regex for require/import (does not cover all cases)
@@ -202,7 +138,7 @@ export class CheckNestedModulesPlugin {
     const importRegex = /import\s+(?:.*?\s+from\s+)?['"]([^'"\)]+)['"]/g;
 
     let match: RegExpExecArray | null;
-    const deps: string[] = [];       
+    const deps: string[] = [];
 
     while ((match = requireRegex.exec(content))) deps.push(match[1]);
     while ((match = importRegex.exec(content))) deps.push(match[1]);
@@ -211,19 +147,18 @@ export class CheckNestedModulesPlugin {
       let depPath: string | null = null;
       let isProblematicModuleFile = false;
       if (dep.startsWith('.') || dep.startsWith('/')) {
-        depPath = path.resolve(path.dirname(filePath), dep);
-        if (!fs.existsSync(depPath) && !depPath.endsWith('.js') && fs.existsSync(depPath + '.js')) {
-          depPath += '.js';
-        }      
+        depPath = this.addExt(path.resolve(path.dirname(filePath), dep));
 
-        // If the resolved file is inside any problematic module directory, always add and scan
         for (const problematicModule of this.cache.problematicModules) {
           const baseDir = path.sep + 'node_modules' + path.sep + problematicModule.split('/')[0] + path.sep;
           if (depPath.includes(baseDir)) {
-       
-            if (!seen.has(depPath) && fs.existsSync(depPath)) {            
+
+            if (!seen.has(depPath) && fs.existsSync(depPath)) {
               seen.add(depPath);
-              this.scanFileDeps(depPath, seen);
+
+              if (recursively) {
+                this.scanFileDeps(depPath, recursively, seen);
+              }
             }
             // Do not process further for this dep
             depPath = null;
@@ -231,19 +166,25 @@ export class CheckNestedModulesPlugin {
           }
         }
       }
-      if (depPath) {
-        if (
-          this.depsList.some(d => dep.includes(d)) ||
-          this.cache.problematicModules.has(dep)
-        ) {
-          depPath = this.moduleResolver.findNestedDependency(dep, path.dirname(filePath));
-        }
-        if (depPath && !seen.has(depPath) && fs.existsSync(depPath)) {
-          seen.add(depPath);
-          this.scanFileDeps(depPath, seen);
-        }
-      }
+
+      // if (depPath) {
+      //   if (
+      //     this.depsList.some(d => dep.includes(d)) ||
+      //     this.cache.problematicModules.has(dep)
+      //   ) {
+      //     depPath = this.moduleResolver.findNestedDependency(dep, path.dirname(filePath));
+      //   }
+      //   if (depPath && !seen.has(depPath) && fs.existsSync(depPath)) {
+      //     seen.add(depPath);
+      //     this.scanFileDeps(depPath, seen);
+      //   }
+      // }
     }
     return seen;
+  }
+
+  private addExt(depPath: string): string
+  {
+    return !fs.existsSync(depPath) && !depPath.endsWith('.js') && fs.existsSync(depPath + '.js') ? `${depPath}.js` : depPath;                  
   }
 }
