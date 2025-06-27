@@ -3,6 +3,7 @@ export declare class DateUtils {
     private _date;
     static DEFAULT_TIMEZONE: string;
     private _tz;
+    static create(input?: string | number | Date, tz?: string): DateUtils;
     constructor(input?: string | number | Date, tz?: string);
     get date(): Date;
     get tz(): string;

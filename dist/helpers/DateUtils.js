@@ -43,6 +43,9 @@ class DateUtils {
     _date;
     static DEFAULT_TIMEZONE = process.env.TZ || 'Europe/Warsaw';
     _tz = DateUtils.DEFAULT_TIMEZONE;
+    static create(input, tz) {
+        return new DateUtils(input, tz);
+    }
     constructor(input, tz) {
         if (input === undefined) {
             this._date = new Date();

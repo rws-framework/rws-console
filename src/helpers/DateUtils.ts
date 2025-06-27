@@ -8,6 +8,10 @@ export class DateUtils {
   static DEFAULT_TIMEZONE = process.env.TZ || 'Europe/Warsaw';
   private _tz: string = DateUtils.DEFAULT_TIMEZONE;
 
+  static create(input?: string | number | Date, tz?: string): DateUtils {
+    return new DateUtils(input, tz);
+  }
+
   constructor(input?: string | number | Date, tz?: string) {
     if (input === undefined) {
       this._date = new Date();
